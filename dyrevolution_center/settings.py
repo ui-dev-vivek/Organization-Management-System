@@ -50,6 +50,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "middlewares.auth.RoleRedirectMiddleware",
 ]
 
 ROOT_URLCONF = "dyrevolution_center.urls"
@@ -77,10 +78,18 @@ WSGI_APPLICATION = "dyrevolution_center.wsgi.application"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+    'default': {
+           'ENGINE': 'django.db.backends.mysql',
+           'NAME': ENV.get('DB_DATABASE'),
+           'USER': ENV.get('DB_USERNAME'),
+           'PASSWORD':ENV.get('DB_PASSWORD'),
+           'HOST': ENV.get('DB_HOST'),
+           'PORT': ENV.get('DB_PORT'),
+       }
+    # "default": {
+    #     "ENGINE": "django.db.backends.sqlite3",
+    #     "NAME": BASE_DIR / "db.sqlite3",
+    # }
 }
 
 
@@ -101,6 +110,8 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
+AUTH_USER_MODEL = 'authentication.DyUser'
 
 
 # Internationalization
