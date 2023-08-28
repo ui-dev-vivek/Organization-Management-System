@@ -1,0 +1,81 @@
+{% extends 'layouts/auth/base.html' %}
+{% load static %}
+
+{% block content  %}
+<div class="container">
+    <div class="authentication-wrapper authentication-basic container-p-y">
+      <div class="authentication-inner">
+        <!-- Register -->
+        <div class="card">
+          <div class="card-body">          
+         
+            <!-- /Logo -->
+            <h3 class="mb-2 text-center">  <img width="40" src="{% static 'images/logo.png' %}" alt=""> {{app_name}}</h3>
+            <p class="mb-4 pt-1">Please Select Subsidiary.</p>
+            <div class="p-1">
+              {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            <section class="sub-list"> 
+              
+              {% if organization %}            
+                 
+                      Organization: {{ organization.name }}
+                      
+                      {% if subsidiaries %}
+                          <p>Subsidiaries:</p>
+                          
+                              {% for subsidiary in subsidiaries %}
+                                  <li>{{ subsidiary.name }}</li>
+                              {% endfor %}
+                          </ul>
+                      {% else %}
+                          <p>No subsidiaries available.</p>
+                      {% endif %}
+                  </div>
+              </div>
+          {% else %}
+              <p>No organization found for the logged-in user.</p>
+          {% endif %}
+
+              
+              <a href="">
+              <div class="rounded shadow p-2 ps-3 mb-2 border ">
+                <h6>Organization Name</h6>
+                <p>Subsidiary Name</p>
+              </div> 
+              </a>   
+              <a href="">
+                <div class="rounded shadow p-2 ps-3 mb-2 border ">
+                  <h6>Organization Name</h6>
+                  <p>Subsidiary Name</p>
+                </div> 
+                </a>             
+                <a href="">
+                  <div class="rounded shadow p-2 ps-3 mb-2 border ">
+                    <h6>Organization Name</h6>
+                    <p>Subsidiary Name</p>
+                  </div> 
+                  </a>   
+                  <a href="">
+                    <div class="rounded shadow p-2 ps-3 mb-2 border ">
+                      <h6>Organization Name</h6>
+                      <p>Subsidiary Name</p>
+                    </div> 
+                    </a>   
+            </section>                    
+          </div>
+        </div>
+        <!-- /Register -->
+      </div>
+    </div>
+  </div>
+    
+{% endblock  %}
+
+    
