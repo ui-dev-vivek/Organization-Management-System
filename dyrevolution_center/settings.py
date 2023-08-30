@@ -94,7 +94,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# AUTH_USER_MODEL = 'authentication.DyUser'
+AUTH_USER_MODEL = 'authentication.User'
 
 
 # Internationalization

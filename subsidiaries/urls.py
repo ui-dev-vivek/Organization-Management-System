@@ -5,3 +5,4 @@ urlpatterns = [
     path('client/', include('clients.urls')),
     path('employee/', include('employees.urls')),
 ]
+
