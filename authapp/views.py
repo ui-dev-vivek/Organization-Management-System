@@ -31,14 +31,12 @@ def user_login(request):
                         messages.error(request, "Profile Incompletea!")
                 elif request.user.is_client:
                     try:
-                        subsidiary = request.user.employees.subsidiary
+                        subsidiary = request.user.clients.subsidiary
                         return redirect(subsidiary.slug + "/client")
                     except:
                         messages.error(request, "Profile Incomplete!")
                 else:
-                    messages.error(request, "You Have No Any Subsidiry")
-
-                
+                    messages.error(request, "You Have No Any Subsidiry")                
             else:
                 messages.error(request, "Your account is not active.")
         else:

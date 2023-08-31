@@ -1,3 +1,19 @@
 from django.db import models
+from authapp.models import User
+from subsidiaries.models import Subsidiaries
+from django.core.validators import FileExtensionValidator
+from Base.models import BaseModel
 
-# Create your models here.
+class Clients(BaseModel):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    subsidiary = models.ForeignKey(Subsidiaries, on_delete=models.CASCADE)
+    phone_no = models.IntegerField(unique=True)
+    organization_name = models.CharField(max_length=255)
+    profile_image = models.ImageField(upload_to='static/profile_images/', null=True,
+                                      validators=[
+            FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])
+            
+        ])
+    # def __str__(self):
+    #     return self.user.username
+   
