@@ -1,3 +1,5 @@
-body{
-    background-color: red;
-}
+
+/* Brand Logo */
+.app-brand-logo img{
+    width: 40px;    
+    }

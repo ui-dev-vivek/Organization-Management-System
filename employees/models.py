@@ -1,8 +1,16 @@
 from django.db import models
 # from django.contrib.auth.models import User
-from authentication.models import User
+from authapp.models import User
 from Base.models import BaseModel
 from subsidiaries.models import Subsidiaries
+from django.core.validators import FileExtensionValidator
+
+
+def validate_image_aspect_ratio(image):
+    width, height = image.size
+    if width != height:
+        raise ValidationError("Only 1:1 aspect ratio images are allowed.")
+
 
 class Employees(BaseModel):
     EMP_TYPE_CHOICES = (
@@ -14,4 +22,10 @@ class Employees(BaseModel):
     subsidiary = models.ForeignKey(Subsidiaries, on_delete=models.CASCADE)
     phone_no = models.IntegerField(unique=True)
     emp_type = models.CharField(max_length=20, choices=EMP_TYPE_CHOICES)
-    profile_image = models.ImageField(upload_to='profile_images/', null=True)
+    profile_image = models.ImageField(upload_to='static/profile_images/', null=True,
+                                      validators=[
+            FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])
+            
+        ])
+    
+    

@@ -1,7 +1,8 @@
-from django.shortcuts import render
-from django.http import HttpResponseRedirect, HttpResponse
-# Create your views here.
+from django.shortcuts import HttpResponse, render
+from .decorators import is_employee
+from subsidiaries.models import Subsidiaries
 
-def dashboard(request,subsidiary):  
-    print(subsidiary)
-    return HttpResponse(request.user.username)
+
+@is_employee
+def dashboard(request,subsidiary):       
+    return render(request,'employee/dashboard.html')

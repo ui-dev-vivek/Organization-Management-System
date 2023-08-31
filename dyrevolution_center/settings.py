@@ -23,9 +23,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # "authentication",
-    # "subsidiaries",
-    # "employees",
+    "authapp",
+    "subsidiaries",
+    "employees",
     "clients",
 ]
 
@@ -94,7 +94,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# AUTH_USER_MODEL = 'authentication.User'
+AUTH_USER_MODEL = 'authapp.User'
 
 
 # Internationalization
