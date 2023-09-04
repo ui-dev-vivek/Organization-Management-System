@@ -5,4 +5,5 @@ from .views import *
 
 urlpatterns = [
     path('' , dashboard, name="dashboard" ),
+    path('profile',client_profile,name="client.profile"),
 ]

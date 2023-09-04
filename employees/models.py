@@ -20,12 +20,16 @@ class Employees(BaseModel):
     )
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     subsidiary = models.ForeignKey(Subsidiaries, on_delete=models.CASCADE)
-    phone_no = models.IntegerField(unique=True)
+    phone_no = models.IntegerField(unique=False)
     emp_type = models.CharField(max_length=20, choices=EMP_TYPE_CHOICES)
     profile_image = models.ImageField(upload_to='static/profile_images/', null=True,
                                       validators=[
             FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])
             
         ])
+    
+    def __str__(self):
+        return self.user.username
+   
     
     

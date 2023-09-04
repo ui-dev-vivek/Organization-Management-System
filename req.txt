@@ -1,1 +1,2 @@
-pip install django-material-admin
+pip install Faker
+pip install Pillow

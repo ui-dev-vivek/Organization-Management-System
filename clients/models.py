@@ -7,7 +7,7 @@ from Base.models import BaseModel
 class Clients(BaseModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     subsidiary = models.ForeignKey(Subsidiaries, on_delete=models.CASCADE)
-    phone_no = models.IntegerField(unique=True)
+    phone_no = models.IntegerField(unique=False)
     organization_name = models.CharField(max_length=255)
     profile_image = models.ImageField(upload_to='static/profile_images/', null=True,
                                       validators=[

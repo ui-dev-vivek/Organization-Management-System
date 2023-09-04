@@ -28,3 +28,10 @@ class Subsidiaries(BaseModel):
     
     def __str__(self):
         return self.name
+    
+class Budgets(BaseModel):
+    subsidiary = models.ForeignKey(Subsidiaries, on_delete=models.CASCADE)
+    year = models.IntegerField()
+    amount = models.FloatField()
+    def __str__(self):
+        return 'Budgets of '+self.subsidiary.name
