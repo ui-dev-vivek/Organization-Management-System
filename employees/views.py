@@ -39,18 +39,47 @@ def emp_profile(request,subsidiary):
     }
     return render(request,'employee/profile.html',data)
 
-def project(request,subsidiary,slug):
+def project(request, subsidiary, slug):
+    # Assuming you have the necessary imports
     
+    # Fetch the currently logged-in employee
     employee_data = Employees.objects.get(user=request.user)
 
-    
-    project=Projects.objects.get(slug=slug)
-    userproject = EmployeeOnProject.objects.filter(employees=employee_data,project=project)
-    data={
-        'project':project,
-        'userproject':userproject
+    # Fetch the project with the specified slug
+    project = Projects.objects.get(slug=slug)
+
+    # Fetch the user's association with the project
+    userproject = EmployeeOnProject.objects.filter(employees=employee_data, project=project)
+
+    # Fetch all employees associated with the project and related user data
+    allemployes = EmployeeOnProject.objects.select_related('employees__user').filter(project=project).all()
+
+    members = []
+
+    for employee in allemployes:
+        employee_data = employee.employees
+        user_data = employee_data.user
+
+        # Combine employee data with user data
+        employee_with_user = {
+            "name": user_data.first_name + " " + user_data.last_name,            
+            "employee_type": employee_data.get_emp_type_display,
+            'is_lead':employee.is_lead,
+            'profile_image':employee_data.profile_image.url
+            # Add more user-related fields as needed
+        }
+
+        # Append the combined data to the list
+        members.append(employee_with_user)
+
+    data = {
+        'project': project,
+        'userproject': userproject,
+        'members': members
     }
-    return render(request,'employee/project.html',data)
+
+    return render(request, 'employee/project.html', data)
+
 
 
 
