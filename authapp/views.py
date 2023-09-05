@@ -7,8 +7,8 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.http import HttpResponse
-# from rest_framework.authtoken.models import Token
-# from rest_framework.decorators import api_view
+from rest_framework.authtoken.models import Token
+from rest_framework.decorators import api_view
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
@@ -44,21 +44,21 @@ def user_login(request):
                 messages.error(request, "Your account is not active.")
         else:
             messages.error(request, "Invalid Email/Username or Password.")
-    datax = {"app_name":"hu"}
-    
-    return render(request, "auth/login.html", datax)
+    data = {"app_name": ENV.get("APP_NAME")}
+    # Create a template named 'login.html'
+    return render(request, "auth/login.html", data)
 
 
 def redirect_login(request):
     return redirect("/")
 
 
-# # @api_view(['POST'])
-# # @login_required
-# def api_auth_token(request):
-#     if request.method == "POST":           
-#         token, created = Token.objects.get_or_create(user=request.user)
-#         return HttpResponse(token.key)
+# @api_view(['POST'])
+@login_required
+def api_auth_token(request):
+    if request.method == "POST": 
+        token, created = Token.objects.get_or_create(user=request.user)
+        return HttpResponse(token.key)
         
 
 

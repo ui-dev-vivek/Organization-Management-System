@@ -4,6 +4,6 @@ from django.urls import path,include
 from .views import *
 
 urlpatterns = [
-    path('list' , list, name="list" ),
-   
+    path('employee' , EmployeeList.as_view(), name="employees" ),
+    path('login',login_api,name='login_api')
 ]

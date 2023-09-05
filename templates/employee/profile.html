@@ -70,14 +70,11 @@
       <h5 class="card-title">API Authentation Token</h5>
       <p class="card-text">
         <form id="formAuthentication" class="mb-3">                
-          <div class="mb-3 form-password-toggle">
-            <div class="d-flex justify-content-between">
-              <label class="form-label" for="password">API Auth Token</label>             
-            </div>
+          <div class="mb-3 form-password-toggle">           
             <div class="row">
               <div class="col-8">                            
                     {%csrf_token%}               
-              <div class="p-2 h6"><span id="tokenx"></span></div>
+              <div class="p-2 h6"><span id="tokenx"></span> <span id="copy-token"> </span></div>
 
                 </div>
               </div>
