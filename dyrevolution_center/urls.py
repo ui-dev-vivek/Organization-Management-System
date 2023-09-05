@@ -5,6 +5,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('',include('authapp.urls')),
     path('<str:subsidiary>/', include('subsidiaries.urls')),
+    path('v1/',include('restapi.urls')),
 ]
 
 admin.site.site_header  =  "Dy Revalution Center"  

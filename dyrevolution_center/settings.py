@@ -28,6 +28,8 @@ INSTALLED_APPS = [
     "employees",
     "clients",
     "projects",
+    "rest_framework",
+    "rest_framework.authtoken",
 ]
 
 MIDDLEWARE = [

@@ -65,6 +65,39 @@
     </div>
     <!-- /Account -->
   </div>
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">API Authentation Token</h5>
+      <p class="card-text">
+        <form id="formAuthentication" class="mb-3">                
+          <div class="mb-3 form-password-toggle">
+            <div class="d-flex justify-content-between">
+              <label class="form-label" for="password">API Auth Token</label>             
+            </div>
+            <div class="row">
+              <div class="col-8">                            
+                    {%csrf_token%}               
+              <div class="p-2 h6"><span id="tokenx"></span></div>
+
+                </div>
+              </div>
+              <div class="col-4 text-start">
+                <button type="button" id="apiTokenGen" class="btn btn-info">
+                  Genetate
+                </button>              
+                <!-- <button type="button" class="btn btn-icon btn-info">
+                  <span class="tf-iconss bx bx-copy-alt"></span>
+                </button> <span class="api-copy-message text-primary">Copies</span> -->
+              </div>
+            </div>
+           
+          </div>      
+         
+        </form>
+      </p>
+      <!-- <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p> -->
+    </div>
+  </div>
   {% endblock main %}
   {% block script %}
   <script src="{% static 'js/profile_image.js' %}"></script>
