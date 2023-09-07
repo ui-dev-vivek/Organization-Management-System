@@ -16,7 +16,7 @@ class Organizations(BaseModel):
         return self.name
 
 class Subsidiaries(BaseModel):
-    organization = models.ForeignKey(Organizations, on_delete=models.CASCADE)
+    organization = models.ForeignKey(Organizations, on_delete=models.CASCADE,related_name='organization')
     name = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
     description=models.TextField()
@@ -30,7 +30,7 @@ class Subsidiaries(BaseModel):
         return self.name
     
 class Budgets(BaseModel):
-    subsidiary = models.ForeignKey(Subsidiaries, on_delete=models.CASCADE)
+    subsidiary = models.ForeignKey(Subsidiaries, on_delete=models.CASCADE,related_name='subsidiary')
     year = models.IntegerField()
     amount = models.FloatField()
     def __str__(self):
