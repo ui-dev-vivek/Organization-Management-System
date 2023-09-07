@@ -1,6 +1,9 @@
 from django.contrib import admin
 from django.urls import path,include
 
+from .views import *
+
 urlpatterns = [
-   
+    path('' , dashboard, name="dashboard" ),
+    path('profile',client_profile,name="client.profile"),
 ]

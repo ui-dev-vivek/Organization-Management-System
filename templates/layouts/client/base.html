@@ -11,7 +11,7 @@ class="light-style layout-menu-fixed">
     <meta name="description" content="" />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="{{request.user.employees.subsidiary.logo.url}}" />
+    <link rel="icon" type="image/x-icon" href="{{request.user.clients.subsidiary.logo.url}}" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -43,25 +43,23 @@ class="light-style layout-menu-fixed">
 
     <!-- CSS-->
     <link rel="stylesheet" href="{% static 'css/main.css'%}" />
-    {% block css %}{% endblock css %}
   </head>
 
   <body>
     <!-- Layout wrapper -->
     <div class="layout-wrapper layout-content-navbar">
       <div class="layout-container">
-        {% include 'layouts/employee/side.html' %}
+        {% include 'layouts/client/side.html' %}
 
         <!-- Layout container -->
         <div class="layout-page">
-          {% include 'layouts/employee/nav.html' %}
+          {% include 'layouts/client/nav.html' %}
 
           <!-- Content wrapper -->
           <div class="content-wrapper">
             <!-- Content -->
 
             <div class="container-xxl flex-grow-1 container-p-y">
-              <br>
              {% block main %}{% endblock main %}
             </div>
           
@@ -69,15 +67,33 @@ class="light-style layout-menu-fixed">
             <!-- Footer -->
             <footer class="content-footer footer bg-footer-theme">
               <div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
-                <div class="mb-2 mb-md-0 text-center">
+                <div class="mb-2 mb-md-0">
                   ©
                   <script>
                     document.write(new Date().getFullYear());
                   </script>
-                  
-                  <a href="" target="_blank" class="footer-link fw-bolder">DY Revalutation </a>
+                  , made with ❤️ by
+                  <a href="https://themeselection.com" target="_blank" class="footer-link fw-bolder">ThemeSelection</a>
                 </div>
-                
+                <div>
+                  <a href="https://themeselection.com/license/" class="footer-link me-4" target="_blank">License</a>
+                  <a href="https://themeselection.com/" target="_blank" class="footer-link me-4">More Themes</a>
+
+                  <a
+                    href="https://themeselection.com/demo/sneat-bootstrap-html-admin-template/documentation/"
+                    target="_blank"
+                    class="footer-link me-4"
+                    >Documentation</a
+                  >
+
+                  <a
+                    href="https://github.com/themeselection/sneat-html-admin-template-free/issues"
+                    target="_blank"
+                    class="footer-link me-4"
+                    >Support</a
+                  >
+                </div>
+              </div>
             </footer>
             <!-- / Footer -->
 
@@ -116,8 +132,5 @@ class="light-style layout-menu-fixed">
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <script src="{%static 'js/main.js'%}"></script>
-    {% block script %}   
-    {% endblock script %}
   </body>
 </html>

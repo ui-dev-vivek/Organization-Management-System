@@ -1,0 +1,3 @@
+pip install Faker
+pip install Pillow
+pip install djangorestframework

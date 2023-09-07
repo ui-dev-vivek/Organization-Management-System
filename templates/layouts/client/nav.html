@@ -10,8 +10,8 @@
     <!-- Search -->
     <div class="navbar-nav align-items-center">
       <div class="nav-item d-flex align-items-center h4 mt-3">
-        <img width="30" src="{{request.user.employees.subsidiary.logo.url}}">&nbsp;
-        {{ request.user.employees.subsidiary.name }}
+        <img width="30" src="{{request.user.clients.subsidiary.logo.url}}">&nbsp;
+        {{ request.user.name }}
       </div>
     </div>
     <!-- /Search -->
@@ -27,7 +27,7 @@
       <li class="nav-item navbar-dropdown dropdown-user dropdown">
         <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
           <div class="avatar avatar-online">
-            <img src="{{request.user.employees.profile_image.url}}" alt class="w-px-40 h-auto rounded-circle" />                     </div>
+            <img src="{{request.user.clients.profile_image.url}}" alt class="w-px-40 h-auto rounded-circle" />                     </div>
         </a>
         <ul class="dropdown-menu dropdown-menu-end">
           <li>
@@ -35,12 +35,12 @@
               <div class="d-flex">
                 <div class="flex-shrink-0 me-3">
                   <div class="avatar avatar-online">
-                    <img src="{{request.user.employees.profile_image.url}}" alt class="w-px-40 h-auto rounded-circle" />
+                    <img src="{{request.user.clients.profile_image.url}}" alt class="w-px-40 h-auto rounded-circle" />
                   </div>
                 </div>
                 <div class="flex-grow-1">
                   <span class="fw-semibold d-block">{{request.user.first_name}} {{request.user.last_name}}</span>
-                  <small class="text-muted">{{request.user.employees.get_emp_type_display}}</small>
+                  <small class="text-muted">Client</small>
                 </div>
               </div>
             </a>
@@ -49,7 +49,7 @@
             {% comment %} <div class="dropdown-divider"></div> {% endcomment %}
           </li>
           <li>
-            <a class="dropdown-item" href="{% url 'emp.profile' subsidiary %}">
+            <a class="dropdown-item" href="#">
               <i class="bx bx-user me-2"></i>
               <span class="align-middle">Profile</span>
             </a>

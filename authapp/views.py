@@ -7,6 +7,9 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.http import HttpResponse
+from rest_framework.authtoken.models import Token
+from rest_framework.decorators import api_view
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 ENV = dotenv_values(".env")
@@ -31,14 +34,12 @@ def user_login(request):
                         messages.error(request, "Profile Incompletea!")
                 elif request.user.is_client:
                     try:
-                        subsidiary = request.user.employees.subsidiary
+                        subsidiary = request.user.clients.subsidiary
                         return redirect(subsidiary.slug + "/client")
                     except:
                         messages.error(request, "Profile Incomplete!")
                 else:
                     messages.error(request, "You Have No Any Subsidiry")
-
-                
             else:
                 messages.error(request, "Your account is not active.")
         else:
@@ -47,8 +48,19 @@ def user_login(request):
     # Create a template named 'login.html'
     return render(request, "auth/login.html", data)
 
+
 def redirect_login(request):
-    return redirect('/')
+    return redirect("/")
+
+
+# @api_view(['POST'])
+@login_required
+def api_auth_token(request):
+    if request.method == "POST": 
+        token, created = Token.objects.get_or_create(user=request.user)
+        return HttpResponse(token.key)
+        
+
 
 def user_logout(request):
     logout(request)
@@ -101,7 +113,9 @@ def reset_password(request, uidb64, token):
 
 
 def error_404(request):
-    return render(request,'error/404.html')
+    return render(request, "error/404.html")
+
+
 # @login_required
 # def subsidiaries(request):
 #     user = request.user

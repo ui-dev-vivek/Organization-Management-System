@@ -27,9 +27,13 @@ INSTALLED_APPS = [
     "subsidiaries",
     "employees",
     "clients",
+    "projects",
+    "rest_framework",
+    "rest_framework.authtoken",
 ]
 
 MIDDLEWARE = [
+    "kolo.middleware.KoloMiddleware", #Need To Remove File
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -37,7 +41,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    # "middlewares.auth.RoleRedirectMiddleware",
+    
 ]
 
 ROOT_URLCONF = "dyrevolution_center.urls"
@@ -53,11 +57,16 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "employees.context_processors.user_projects",
             ],
         },
     },
 ]
-
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+}
 WSGI_APPLICATION = "dyrevolution_center.wsgi.application"
 
 DATABASES = {
