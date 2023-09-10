@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "employees",
     "clients",
     "projects",
+    "payments",
     "rest_framework",
     "rest_framework.authtoken",
 ]
