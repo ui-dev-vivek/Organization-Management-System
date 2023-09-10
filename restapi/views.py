@@ -196,3 +196,23 @@ class ProjectDetailsWithEmployeeAndClientView(generics.RetrieveAPIView):
             return Response(response_data)
         else:
             return Response({"error": "parameter is missing"})
+        
+        
+class InvoiceListCreateView(generics.ListCreateAPIView):
+    def get(self, request, format=None):
+        # Get the invoice number from the query parameters
+        invoice_number = self.request.query_params.get('invoice_number')
+
+        try:
+            # Retrieve the invoice by invoice_number
+            invoice = Invoice.objects.get(invoice_number=invoice_number)
+        except Invoice.DoesNotExist:
+            return Response(
+                {"detail": "Invoice not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # Serialize the invoice, including related user and items
+        serializer = InvoiceSerializer(invoice)
+
+        return Response(serializer.data)

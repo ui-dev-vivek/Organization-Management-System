@@ -11,5 +11,8 @@ urlpatterns = [
     path('subsidiaries/<slug:slug>/',SubsidiariesDetailView.as_view(), name='subsidiaries-detail'),
     path('subsidiaries-projects/',SubsidiariesProjectsListView.as_view(), name='subsidiaries-projects-list'),
     path('subsidiaries-projects-budgets/',SubsidiariesDetailsView.as_view(), name='subsidiaries-projects-budgets-list'),
-    path('projects-details/',ProjectDetailsWithEmployeeAndClientView.as_view(), name='projects-details'),
+    path('projects-details/',ProjectDetailsWithEmployeeAndClientView.as_view(), name='projects-details'), 
+    path('invoices/', InvoiceListCreateView.as_view(), name='invoice-list-create'),
+   
+
 ]

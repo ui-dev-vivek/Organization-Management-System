@@ -1,11 +1,11 @@
 from rest_framework import serializers
-from authapp.models import User
+from authapp.models import User,Address
 from employees.models import Employees
 from subsidiaries.models import Organizations,Subsidiaries,Budgets
 from employees.models import Employees
 from clients.models import Clients
 from projects.models import Projects,EmployeeOnProject,ClientOnProject
-
+from payments.models import Invoice, Item
 
 class BudgetSerializer(serializers.ModelSerializer):
     class Meta:
@@ -45,6 +45,11 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['email', 'username', 'first_name', 'last_name']
 
+class AddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Address
+        fields = '__all__'
+
 class EmployeeSerializer(serializers.ModelSerializer):
     user = UserSerializer()
 
@@ -66,3 +71,24 @@ class ProjectWithEmployeeAndClientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Projects
         fields = '__all__'
+        
+        
+
+
+class ItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Item
+        fields = '__all__'
+
+class InvoiceSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+    address = AddressSerializer(source='user.address', read_only=True)
+    items = ItemSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Invoice
+        fields = '__all__'
+
+
+
+    
