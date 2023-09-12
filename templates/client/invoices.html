@@ -1,0 +1,231 @@
+{% extends 'layouts/client/base.html' %}
+{% load static %}
+{% block main %}
+<style> 
+     
+        .invoice {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .invoice-details {
+            text-align: right;
+        }
+        .invoice-details p {
+            margin: 0;
+        }
+        .invoice-details strong {
+            display: block;
+        }
+        .address {
+            margin-top: 20px;
+        }
+        .address h2 {
+            margin-bottom: 10px;
+        }
+        .address p {
+            margin: 5px 0;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .table th, .table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .table th {
+            background-color: #f2f2f2;
+        }
+        .total {
+            margin-top: 20px;
+            text-align: right;
+        }
+    </style>
+
+<div class="card">
+    <h5 class="card-header">Invoices</h5>
+    <div class="table-responsive text-nowrap">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Invoice Number</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Due Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+                {% for invoice in invoices %}
+                <tr>
+                    <td>{{ invoice.invoice_number }}</td>
+                    <td>{{ invoice.amount }}</td>
+                    <td>
+                        {%if invoice.is_paid%}
+                        <span
+                            class="bg-success text-black rounded-pill  ps-2 pe-2">Paid</span>
+                        {%else%}
+                        <span
+                            class="bg-warning text-black rounded-pill ps-2 pe-2">Due</span>
+                        {%endif%}
+                    </td>
+                    <td>{{ invoice.due_date }}</td>
+                    <th>
+                        <a href="javascript:void(0)" class
+                            data-bs-toggle="offcanvas"
+                            data-bs-target="#offcanvasBackdrop{{ invoice.invoice_number }}"
+                            aria-controls="offcanvasBackdrop{{ invoice.invoice_number }}">
+                            <i class="bx bx-receipt "></i>
+                        </button>
+                    </th>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<section>
+    {% for invoice in invoices %}
+    <div class="offcanvas offcanvas-end" tabindex="-1"
+        id="offcanvasBackdrop{{ invoice.invoice_number }}"
+        aria-labelledby="offcanvasBackdropLabel{{ invoice.invoice_number }}"
+        aria-hidden="true" style="visibility: hidden;">
+        <div class="offcanvas-header">
+            <h5 id="offcanvasBackdropLabel{{ invoice.invoice_number }}"
+                class="offcanvas-title">{{ invoice.invoice_number }}</h5>
+            <button type="button" class="btn-close text-reset"
+                data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body my-auto mx-0 flex-grow-0">
+            <p class="text-end">
+                {%if invoice.is_paid%}
+                <span class="bg-success text-black rounded-pill p-1  ps-4 pe-4"><i
+                        class="bx bx-check-double"></i> Paid </span>
+                {%else%}
+                <span class="bg-warning text-black rounded-pill p-1  ps-4 pe-4"><i
+                        class="bx bx-info-circle"></i> Due</span>
+                {%endif%}
+            </p>
+            <div class="border p-1 mb-1">
+                <h5>Invoice:</h5>
+                <table class="table table-sm">
+                    <tr>
+                        <td>Invoice No.</td>
+                        <td>{{invoice.invoice_number}}</td>
+                    </tr>
+                    <tr>
+                        <td>Amount</td>
+                        <td><i class="bx bx-dollar"> </i> {{invoice.amount}}</td>
+                    </tr>
+                    <tr>
+                        <td>Due Date</td>
+                        <td>{{invoice.due_date}}</td>
+                    </tr>
+
+                </table></div>
+            <div class="border p-1 mb-1">
+                <h5>Items:</h5>
+                <table class="table table-sm">
+                    <tr>
+                        <th>Item</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                    </tr>
+                    {% for item in invoice.items %}
+                    <tr>
+                        <td>{{ item.name }}</td>
+
+                        <td><i class="bx bx-dollar"></i> {{ item.unit_price }}</td>
+                        <td>{{ item.quantity }}</td>
+
+                    </tr>
+                    {% endfor %}
+
+                </table></div>
+            <div class="border p-1 mb-1">
+                <h5>Address:</h5>
+                <p class="ps-4">
+                    <strong>{{invoice.user.first_name}}
+                        {{invoice.user.lase_name}}</strong> <br>{{invoice.user.email}} <br>
+                    {{ invoice.address.street_address }}<br>
+                    {{ invoice.address.apt_suite_number }}<br>
+                    {{ invoice.address.city }}, {{ invoice.address.state }} <br>
+                  
+                    {{invoice.address.zip_code }} <br>
+                    {{ invoice.address.country }}
+                </p>
+            </div>
+            <br>
+            <p class="fixed-bottom text-end pe-5 me-4">
+                <button class="rounded-pill bnt btn-info ps-4 pe-4 p-1"> <i class="bx bx-printe"></i> Print</button>
+
+            </p>
+        </div>
+    </div>
+  
+
+    <div class="invoice d-none" id="printin{{invoice.invoice_number}}">
+        <div class="header">
+            <h1>Invoice</h1>
+        </div>
+        <div class="invoice-details">
+            <p>Date: <strong>{{ invoice.date }}</strong></p>
+            <p>Invoice Number: <strong>{{ invoice.invoice_number }}</strong></p>
+        </div>
+        <div class="address">
+            <div class="seller">
+                <h2>Seller</h2>
+                <p>Company Name</p>
+                <p>Phone: +1 (646) 8146397</p>
+                <p>Email: hey@dyrevolution.com</p>
+                <!-- Add more seller information here -->
+            </div>
+            <div class="buyer">
+                <h2>Buyer</h2>
+                <p>Customer Name</p>
+                <p>Address: 123 Main St</p>
+                <p>City: Cityville</p>
+                <p>State: CA</p>
+                <p>Zip: 12345</p>
+                <!-- Add more buyer information here -->
+            </div>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Description</th>
+                    <th>Unit Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in invoice.items %}
+                    <tr>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.description }}</td>
+                        <td>${{ item.unit_price }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>${{ item.unit_price }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="total">
+            <p>Total Amount: <strong>${{ invoice.total_amount }}</strong></p>
+        </div>
+    </div>
+    {%endfor%}
+</section>
+{% endblock main %}
