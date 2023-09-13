@@ -3,18 +3,19 @@
 {% block main %}
 <div class="contain">
     <div class="row">
-        <div class="col-lg-8 mb-4 order-0">
+        <div class="col-lg-12 mb-4 order-0">
             <div class="card">
                 <div class="d-flex align-items-end row">
                   <div class="col-sm-7">
                     <div class="card-body">
-                      <h5 class="card-title text-primary">Welcome back {{request.user.first_name}}! 🎉</h5>
+                      <h4 class="card-title text-dark"><img width="30" src="{{request.user.clients.subsidiary.logo.url}}" alt=""> {{request.user.clients.subsidiary.name}}</h4>
                       <p class="mb-4">
-                        You have done <span class="fw-bold">72%</span> more sales today. Check your new badge in
-                        your profile.
-                      </p>
+                        {{request.user.clients.subsidiary.description}}
 
-                      <a href="profile" class="btn btn-sm btn-outline-primary">Profile</a>   <a href="profile" class="btn btn-sm btn-primary">Projects</a>
+                      </p>
+                       <!-- <h5> <strong>{{request.user.clients.subsidiary.organization.name}}</strong></h6> -->
+
+                      <!-- <p>{{request.user.clients.subsidiary.organization.description}}</p>                     -->
                     </div>
                   </div>
                   <div class="col-sm-5 text-center text-sm-left">

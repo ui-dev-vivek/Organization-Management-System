@@ -145,7 +145,7 @@ def invoices(request, subsidiary):
                     # Add other payment history fields you need here
                 })
             invoice_data['payment_history'] = payment_data
-
+            # invoice_data['subtotal_with_tax'] = invoice['amount'] + (invoice['amount'] * (invoice['tax_rate'] / 100))
             serialized_invoices.append(invoice_data)
             # print(serialized_invoices)
     

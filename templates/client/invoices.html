@@ -156,76 +156,127 @@
                 <h5>Address:</h5>
                 <p class="ps-4">
                     <strong>{{invoice.user.first_name}}
-                        {{invoice.user.lase_name}}</strong> <br>{{invoice.user.email}} <br>
+                        {{invoice.user.lase_name}}</strong> <br>{{invoice.user.email}}
+                    <br>
                     {{ invoice.address.street_address }}<br>
                     {{ invoice.address.apt_suite_number }}<br>
                     {{ invoice.address.city }}, {{ invoice.address.state }} <br>
-                  
+
                     {{invoice.address.zip_code }} <br>
                     {{ invoice.address.country }}
                 </p>
             </div>
             <br>
             <p class="fixed-bottom text-end pe-5 me-4">
-                <button class="rounded-pill bnt btn-info ps-4 pe-4 p-1"> <i class="bx bx-printe"></i> Print</button>
+                <button class="rounded-pill bnt btn-info ps-4 pe-4 p-1"
+                    onclick="printDiv('{{invoice.invoice_number}}')"> <i
+                        class="bx bx-printer"></i> Print</button>
 
             </p>
         </div>
     </div>
-  
-
-    <div class="invoice d-none" id="printin{{invoice.invoice_number}}">
-        <div class="header">
-            <h1>Invoice</h1>
-        </div>
-        <div class="invoice-details">
-            <p>Date: <strong>{{ invoice.date }}</strong></p>
-            <p>Invoice Number: <strong>{{ invoice.invoice_number }}</strong></p>
-        </div>
-        <div class="address">
-            <div class="seller">
-                <h2>Seller</h2>
-                <p>Company Name</p>
-                <p>Phone: +1 (646) 8146397</p>
-                <p>Email: hey@dyrevolution.com</p>
-                <!-- Add more seller information here -->
+    <section class="d-none">
+        <div id="my-invoice{{ invoice.invoice_number }}" class="border container p-5"
+            style="border: 2px solid black;">
+            <div class="text-end">
+                <button onclick="window.print()" class="btn btn-info">Print</button>
             </div>
-            <div class="buyer">
-                <h2>Buyer</h2>
-                <p>Customer Name</p>
-                <p>Address: 123 Main St</p>
-                <p>City: Cityville</p>
-                <p>State: CA</p>
-                <p>Zip: 12345</p>
-                <!-- Add more buyer information here -->
+            <div class="row">
+                <div class="col-6">
+                    <h2>DY Revalutions LLC.</h2>
+                    <p class="p ps-1">
+                        Maxico,<br> New Yowrk <br> United States
+                        <br> 234345 <br>
+                        GST: 09AACCI7008M1ZB
+                    </p>
+                    <hr>
+                    <h4>Billing Information</h4>
+                    <p class="h6">{{invoice.user.first_name}}
+                        {{invoice.user.lase_name}} </p>
+                    <p class>
+                        {{invoice.user.email}}
+                    </p>
+                </div>
+                <div class="col-6">
+                    <div class="invoice text-end pe-3 pt-5">
+                        <h2>Invoice</h2>
+                        <p>{{invoice.invoice_number}} <br>
+                            {{ invoice.created_at|date:'M d, Y h:i:sA' }}
+                        </p>
+                    </div>
+                </div>
             </div>
-        </div>
-        <table class="table">
-            <thead>
+            <hr>
+            <table class="table">
                 <tr>
-                    <th>Item</th>
-                    <th>Description</th>
-                    <th>Unit Price</th>
+                    <th class="text-center">Product</th>
                     <th>Quantity</th>
-                    <th>Total</th>
+                    <th class="text-end">Subtotal</th>
                 </tr>
-            </thead>
-            <tbody>
                 {% for item in invoice.items %}
-                    <tr>
-                        <td>{{ item.name }}</td>
-                        <td>{{ item.description }}</td>
-                        <td>${{ item.unit_price }}</td>
-                        <td>{{ item.quantity }}</td>
-                        <td>${{ item.unit_price }}</td>
-                    </tr>
+                <tr>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>${{ item.unit_price }}</td>
+
+                </tr>
                 {% endfor %}
-            </tbody>
-        </table>
-        <div class="total">
-            <p>Total Amount: <strong>${{ invoice.total_amount }}</strong></p>
+                <tr>
+                    <td></td>
+                    <td class="p">
+                        Sub Total <br>
+                        GST <br>
+                        Discount
+                        <hr>
+                        <span class="h2">Total</span>
+                    </td>
+                    <td class="p text-end">
+                        <i class="bx bx-dollar"></i> 
+                        <br>
+                        {{ invoice.tax_rate }}% <br>
+                        <i class="bx bx-dollar"></i> -0.00
+                        <hr>
+                        <span class="h2"> <i class="bx bx-dollar"></i>
+                            {{ invoice.amount }}</span>
+                    </td>
+                </tr>
+            </table>
+            <div class="text-center">
+            </div>
         </div>
-    </div>
+
+       
+    </section>
+
     {%endfor%}
 </section>
 {% endblock main %}
+
+{% block script %}
+<script>
+    function printDiv(id) {
+        // alert(id)
+        var divToPrint = document.getElementById("my-invoice" + id).outerHTML;
+        // divToPrint.classList.remove('d-none');
+        // divToPrint.classList.add('d-block');
+        var printWindow = window.open("", "_blank");
+        printWindow.document.open();
+        printWindow.document.write(
+            '<html><head><title>' + id + '</title>');
+        printWindow.document.write(
+            '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">'
+        );
+
+        printWindow.document.write(
+            '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">'
+        );
+        printWindow.document.write('</head><body>');
+        printWindow.document.write(divToPrint);
+        printWindow
+            .document.write('</body></html>');
+        printWindow.document.close();
+        // printWindow.print();
+        // divToPrint.classList.add('d-none');
+    }
+</script>
+{%endblock%}

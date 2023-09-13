@@ -4,7 +4,7 @@ from subsidiaries.models import Subsidiaries
 from employees.models import Employees
 from clients.models import Clients
 from django.utils.translation import gettext_lazy as _
-
+from authapp.models import User
 class Projects(models.Model):
     PROJECT_STATUS = [
         ('start', _('Start')),
@@ -36,3 +36,30 @@ class ClientOnProject(BaseModel):
     clients = models.ForeignKey(Clients, on_delete=models.CASCADE)
     assigned_date = models.DateTimeField()
 
+class ProjectTask(BaseModel):
+    project = models.ForeignKey(Projects, on_delete=models.CASCADE)
+    assigned_to = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    start_date = models.DateTimeField(auto_now_add=True)
+    end_date = models.DateTimeField(null=True)
+
+    def __str__(self):
+        return self.title
+
+class TaskChecklist(BaseModel):
+    project_task = models.ForeignKey(ProjectTask, on_delete=models.CASCADE)
+    title = models.CharField(max_length=255)
+    status = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.title
+    
+class Attachments(BaseModel):
+    project = models.ForeignKey(Projects, on_delete=models.CASCADE)
+    upload_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    attachment_file = models.FileField(upload_to='static/attachments/')
+
+    def __str__(self):
+        return str(self.name)
