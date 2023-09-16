@@ -10,7 +10,7 @@ class User(AbstractUser):
         return self.username + " : "+self.email
 
 class Address(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='address')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='address')
     street_address = models.CharField(max_length=255,null=True)
     apt_suite_number = models.CharField(max_length=50, blank=True, null=True)
     city = models.CharField(max_length=100)

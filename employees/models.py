@@ -31,5 +31,5 @@ class Employees(BaseModel):
     def __str__(self):
         return self.user.username
    
-    
+    USERNAME_FIELD = 'username'
     
