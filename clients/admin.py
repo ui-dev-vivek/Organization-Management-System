@@ -48,6 +48,11 @@ class ClientsAdmin(admin.ModelAdmin):
             'fields': ('phone_no', 'organization_name', 'profile_image')
         }),
     )
+    search_fields = ['subsidiary__name','user__username','user__email'] 
+    ordering = ['user__username']  
+    list_filter = ('subsidiary',) 
+    autocomplete_fields = ['subsidiary']
+    
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
 
@@ -89,8 +94,8 @@ class ClientsAdmin(admin.ModelAdmin):
             email=form.cleaned_data['email'],
             first_name=form.cleaned_data['first_name'],
             last_name=form.cleaned_data['last_name'],
-            is_employee=True,
-            is_client=False
+            is_employee=False,
+            is_client=True
         )
         user.set_password(form.cleaned_data['password'])
         user.save()
@@ -109,7 +114,6 @@ class ClientsAdmin(admin.ModelAdmin):
         obj.user = user
         obj.save()   
 
-
-
-
 admin.site.register(Clients, ClientsAdmin)
+
+#code Closed!

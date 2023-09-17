@@ -3,10 +3,6 @@ from .models import Employees
 from authapp.models import User, Address
 from .forms import EmployeeForm
 
-class AddressAdmin(admin.StackedInline):
-    model = Address
-    extra = 1
-
 class EmployeeAdmin(admin.ModelAdmin):
     form = EmployeeForm
     exclude = ('user',)
@@ -37,7 +33,7 @@ class EmployeeAdmin(admin.ModelAdmin):
         return obj.subsidiary.name
 
     get_subsidiary_name.short_description = "Subsidiary Name"
-    # inlines=['AddressAdmin']
+    
     fieldsets = (
         ('User Information', {
             'fields': ('subsidiary','username', 'password','confirm_password', 'email', 'first_name','last_name')
@@ -49,6 +45,12 @@ class EmployeeAdmin(admin.ModelAdmin):
             'fields': ('phone_no', 'emp_type', 'profile_image')
         }),
     )
+    
+    search_fields = ['subsidiary__name','user__username'] 
+    ordering = ['user__username']  
+    list_filter = ('subsidiary','emp_type') 
+    autocomplete_fields = ['subsidiary']
+    
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
 
@@ -58,8 +60,8 @@ class EmployeeAdmin(admin.ModelAdmin):
                 'email': obj.user.email,
                 'first_name': obj.user.first_name,
                 'last_name': obj.user.last_name,
-                'password': "",  # Leave password field empty for editing
-                'confirm_password': "",  # Also leave confirm_password empty
+                'password': "", 
+                'confirm_password': "",  
                 'phone_no': obj.phone_no,
                 'emp_type': obj.emp_type,
                 'profile_image': obj.profile_image,
@@ -103,9 +105,9 @@ class EmployeeAdmin(admin.ModelAdmin):
             zip_code=form.cleaned_data['zip_code'],
             state=form.cleaned_data['state'],
             country=form.cleaned_data['country'],
-            user=user  # Associate the address with the user
+            user=user 
         )
-        address.save()  # Address will be saved with the correct user association
+        address.save() 
 
         obj.user = user
         obj.save()
@@ -114,3 +116,4 @@ class EmployeeAdmin(admin.ModelAdmin):
 
 admin.site.register(Employees,EmployeeAdmin)
 
+#Code Closed!

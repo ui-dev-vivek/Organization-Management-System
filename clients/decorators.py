@@ -11,8 +11,9 @@ def is_client(view_func):
             subsidiary_slug = resolved_kwargs.get('subsidiary')       
             subsidiary=Subsidiaries.objects.get(clients__user__id=request.user.id);
             if not request.user.is_client or subsidiary.slug!=subsidiary_slug:
-                return redirect('/404-error')  # Replace 'login' with the appropriate URL name for your login page
+                return redirect('/404-error')  
             return view_func(request, *args, **kwargs)
         else:
             return redirect('/')
     return decorated_view_func
+#code Closed!

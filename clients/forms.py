@@ -25,10 +25,10 @@ class ClientForm(forms.ModelForm):
         if password != confirm_password:
             raise forms.ValidationError("Passwords do not match.")
         
-        if User.objects.filter(username=username).exists():
+        if User.objects.filter(username=cleaned_data.get("username")).exists():
             raise forms.ValidationError("Username already exists. Please choose a different one.")
 
-        if User.objects.filter(email=email).exists():
+        if User.objects.filter(email=cleaned_data.get("email")).exists():
             raise forms.ValidationError("Email address already exists. Please use a different one.")
 
         return cleaned_data
@@ -43,3 +43,4 @@ class ClientForm(forms.ModelForm):
     country = forms.CharField(label='Country', max_length=100, initial="United States")
     
     
+#code Closed!

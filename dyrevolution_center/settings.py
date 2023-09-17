@@ -25,9 +25,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "authapp",
     "subsidiaries",
-    "employees",
-    "clients",
+    "employees",    
     "projects",
+    "clients",
     "payments",
     "rest_framework",
     "rest_framework.authtoken",
@@ -71,18 +71,18 @@ REST_FRAMEWORK = {
 WSGI_APPLICATION = "dyrevolution_center.wsgi.application"
 
 DATABASES = {
-    'default': {
-           'ENGINE': 'django.db.backends.mysql',
-           'NAME': ENV.get('DB_DATABASE'),
-           'USER': ENV.get('DB_USERNAME'),
-           'PASSWORD':ENV.get('DB_PASSWORD'),
-           'HOST': ENV.get('DB_HOST'),
-           'PORT': ENV.get('DB_PORT'),
-       }
-    # "default": {
-    #     "ENGINE": "django.db.backends.sqlite3",
-    #     "NAME": BASE_DIR / "db.sqlite3",
-    # }
+    # 'default': {
+    #        'ENGINE': 'django.db.backends.mysql',
+    #        'NAME': ENV.get('DB_DATABASE'),
+    #        'USER': ENV.get('DB_USERNAME'),
+    #        'PASSWORD':ENV.get('DB_PASSWORD'),
+    #        'HOST': ENV.get('DB_HOST'),
+    #        'PORT': ENV.get('DB_PORT'),
+    #    }
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
 }
 
 
