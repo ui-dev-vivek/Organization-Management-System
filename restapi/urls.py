@@ -12,7 +12,6 @@ urlpatterns = [
     path('subsidiaries-projects/',SubsidiariesProjectsListView.as_view(), name='subsidiaries-projects-list'),
     path('subsidiaries-projects-budgets/',SubsidiariesDetailsView.as_view(), name='subsidiaries-projects-budgets-list'),
     path('projects-details/',ProjectDetailsWithEmployeeAndClientView.as_view(), name='projects-details'), 
-    path('invoices/', InvoiceListCreateView.as_view(), name='invoice-list-create'),
-   
+    path('invoices/', InvoiceListCreateView.as_view(), name='invoice-list-create'),  
 
 ]

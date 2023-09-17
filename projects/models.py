@@ -30,11 +30,17 @@ class EmployeeOnProject(BaseModel):
     employees = models.ForeignKey(Employees, on_delete=models.CASCADE)
     is_lead=models.BooleanField(default=False)
     assigned_date = models.DateTimeField()
+    def __str__(self):
+        return self.employees.user.first_name +" "+self.employees.user.last_name
+
    
 class ClientOnProject(BaseModel):
     project = models.ForeignKey(Projects, on_delete=models.CASCADE)    
     clients = models.ForeignKey(Clients, on_delete=models.CASCADE)
     assigned_date = models.DateTimeField()
+    
+    def __str__(self):
+        return self.clients.user.first_name +" "+self.clients.user.last_name
 
 class ProjectTask(BaseModel):
     project = models.ForeignKey(Projects, on_delete=models.CASCADE)
@@ -63,3 +69,5 @@ class Attachments(BaseModel):
 
     def __str__(self):
         return str(self.name)
+
+#code Closed!

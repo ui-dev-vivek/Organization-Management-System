@@ -1,7 +1,7 @@
 from django.db import models
 from Base.models import BaseModel
 from django.core.validators import FileExtensionValidator
-# Create your models here.
+
 class Organizations(BaseModel):
     name = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
@@ -27,7 +27,7 @@ class Subsidiaries(BaseModel):
         ])
     
     def __str__(self):
-        return self.name
+        return self.name 
     
 class Budgets(BaseModel):
     subsidiary = models.ForeignKey(Subsidiaries, on_delete=models.CASCADE,related_name='subsidiary')
@@ -35,3 +35,4 @@ class Budgets(BaseModel):
     amount = models.FloatField()
     def __str__(self):
         return 'Budgets of '+self.subsidiary.name
+# Code Closed!

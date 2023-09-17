@@ -18,3 +18,4 @@ def user_projects(request):
         return {'user_projects': []}
     
 
+#code Closed!

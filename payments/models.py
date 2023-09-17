@@ -10,15 +10,11 @@ class Invoice(BaseModel):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     is_paid = models.BooleanField(default=False)
     due_date = models.DateField()
-    payment_method = models.CharField(max_length=50)
-    # transaction_id = models.CharField(max_length=100)    
+    payment_method = models.CharField(max_length=50)      
     tax_rate = models.DecimalField(max_digits=5, decimal_places=2, default=0.0)
-    # shipping_address = models.ForeignKey(Address, on_delete=models.SET_NULL, blank=True, null=True, related_name='shipping_invoices')
-    # billing_address = models.ForeignKey(Address, on_delete=models.SET_NULL, blank=True, null=True, related_name='billing_invoices')
     
 
-    def save(self, *args, **kwargs):
-        # Generate a unique invoice number starting with "DYR"
+    def save(self, *args, **kwargs):        
         if not self.invoice_number:
             unique_id = uuid.uuid4().hex[:8]  # Generate a unique ID
             self.invoice_number = f"DYR-{unique_id}"
@@ -54,3 +50,4 @@ class PaymentHistory(BaseModel):
     def __str__(self):
         return f'{self.user} - {self.amount} - {self.payment_date}'
 
+#Code Closed
