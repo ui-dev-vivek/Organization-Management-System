@@ -11,7 +11,7 @@
     <div class="navbar-nav align-items-center">
       <div class="nav-item d-flex align-items-center h4 mt-3">
         <img width="30" src="{{request.user.clients.subsidiary.logo.url}}">&nbsp;
-        {{ request.user.name }}
+        {{ request.user.clients.subsidiary.name }}
       </div>
     </div>
     <!-- /Search -->
@@ -45,22 +45,22 @@
               </div>
             </a>
           </li>
-          <li>
+          <!-- <li>
             {% comment %} <div class="dropdown-divider"></div> {% endcomment %}
-          </li>
+          </li> -->
           <li>
-            <a class="dropdown-item" href="#">
+            <a class="dropdown-item" href="{% url 'client_profile' subsidiary %}">
               <i class="bx bx-user me-2"></i>
               <span class="align-middle">Profile</span>
             </a>
           </li>
-          {% comment %} <li>
+          <!--  <li>
             <a class="dropdown-item" href="#">
               <i class="bx bx-cog me-2"></i>
               <span class="align-middle">Settings</span>
             </a>
-          </li> {% endcomment %}
-          {% comment %} <li>
+          </li> 
+          <li> 
             <a class="dropdown-item" href="#">
               <span class="d-flex align-items-center align-middle">
                 <i class="flex-shrink-0 bx bx-credit-card me-2"></i>
@@ -68,10 +68,10 @@
                 <span class="flex-shrink-0 badge badge-center rounded-pill bg-danger w-px-20 h-px-20">4</span>
               </span>
             </a>
-          </li> {% endcomment %}
-          <li>
+          </li> -->
+          <!-- <li>
             {% comment %} <div class="dropdown-divider"></div> {% endcomment %}
-          </li>
+          </li> -->
           <li>
             <a class="dropdown-item" href="{% url 'auth.logout' %}">
               <i class="bx bx-power-off me-2"></i>

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from authapp.models import User
+from authapp.models import User,Address
 from django.contrib.auth.admin import UserAdmin
 # Register your models here.
 # admin.site.register(User)
@@ -16,3 +16,4 @@ class CustomUserAdmin(UserAdmin):
         }),
         ('Important dates', {'fields': ('last_login', 'date_joined')}),
     )
+admin.site.register(Address)

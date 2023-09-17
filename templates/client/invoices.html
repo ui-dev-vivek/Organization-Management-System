@@ -1,0 +1,282 @@
+{% extends 'layouts/client/base.html' %}
+{% load static %}
+{% block main %}
+<style> 
+     
+        .invoice {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .invoice-details {
+            text-align: right;
+        }
+        .invoice-details p {
+            margin: 0;
+        }
+        .invoice-details strong {
+            display: block;
+        }
+        .address {
+            margin-top: 20px;
+        }
+        .address h2 {
+            margin-bottom: 10px;
+        }
+        .address p {
+            margin: 5px 0;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .table th, .table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .table th {
+            background-color: #f2f2f2;
+        }
+        .total {
+            margin-top: 20px;
+            text-align: right;
+        }
+    </style>
+
+<div class="card">
+    <h5 class="card-header">Invoices</h5>
+    <div class="table-responsive text-nowrap">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Invoice Number</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Due Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+                {% for invoice in invoices %}
+                <tr>
+                    <td>{{ invoice.invoice_number }}</td>
+                    <td>{{ invoice.amount }}</td>
+                    <td>
+                        {%if invoice.is_paid%}
+                        <span
+                            class="bg-success text-black rounded-pill  ps-2 pe-2">Paid</span>
+                        {%else%}
+                        <span
+                            class="bg-warning text-black rounded-pill ps-2 pe-2">Due</span>
+                        {%endif%}
+                    </td>
+                    <td>{{ invoice.due_date }}</td>
+                    <th>
+                        <a href="javascript:void(0)" class
+                            data-bs-toggle="offcanvas"
+                            data-bs-target="#offcanvasBackdrop{{ invoice.invoice_number }}"
+                            aria-controls="offcanvasBackdrop{{ invoice.invoice_number }}">
+                            <i class="bx bx-receipt "></i>
+                        </button>
+                    </th>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<section>
+    {% for invoice in invoices %}
+    <div class="offcanvas offcanvas-end" tabindex="-1"
+        id="offcanvasBackdrop{{ invoice.invoice_number }}"
+        aria-labelledby="offcanvasBackdropLabel{{ invoice.invoice_number }}"
+        aria-hidden="true" style="visibility: hidden;">
+        <div class="offcanvas-header">
+            <h5 id="offcanvasBackdropLabel{{ invoice.invoice_number }}"
+                class="offcanvas-title">{{ invoice.invoice_number }}</h5>
+            <button type="button" class="btn-close text-reset"
+                data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body my-auto mx-0 flex-grow-0">
+            <p class="text-end">
+                {%if invoice.is_paid%}
+                <span class="bg-success text-black rounded-pill p-1  ps-4 pe-4"><i
+                        class="bx bx-check-double"></i> Paid </span>
+                {%else%}
+                <span class="bg-warning text-black rounded-pill p-1  ps-4 pe-4"><i
+                        class="bx bx-info-circle"></i> Due</span>
+                {%endif%}
+            </p>
+            <div class="border p-1 mb-1">
+                <h5>Invoice:</h5>
+                <table class="table table-sm">
+                    <tr>
+                        <td>Invoice No.</td>
+                        <td>{{invoice.invoice_number}}</td>
+                    </tr>
+                    <tr>
+                        <td>Amount</td>
+                        <td><i class="bx bx-dollar"> </i> {{invoice.amount}}</td>
+                    </tr>
+                    <tr>
+                        <td>Due Date</td>
+                        <td>{{invoice.due_date}}</td>
+                    </tr>
+
+                </table></div>
+            <div class="border p-1 mb-1">
+                <h5>Items:</h5>
+                <table class="table table-sm">
+                    <tr>
+                        <th>Item</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                    </tr>
+                    {% for item in invoice.items %}
+                    <tr>
+                        <td>{{ item.name }}</td>
+
+                        <td><i class="bx bx-dollar"></i> {{ item.unit_price }}</td>
+                        <td>{{ item.quantity }}</td>
+
+                    </tr>
+                    {% endfor %}
+
+                </table></div>
+            <div class="border p-1 mb-1">
+                <h5>Address:</h5>
+                <p class="ps-4">
+                    <strong>{{invoice.user.first_name}}
+                        {{invoice.user.lase_name}}</strong> <br>{{invoice.user.email}}
+                    <br>
+                    {{ invoice.address.street_address }}<br>
+                    {{ invoice.address.apt_suite_number }}<br>
+                    {{ invoice.address.city }}, {{ invoice.address.state }} <br>
+
+                    {{invoice.address.zip_code }} <br>
+                    {{ invoice.address.country }}
+                </p>
+            </div>
+            <br>
+            <p class="fixed-bottom text-end pe-5 me-4">
+                <button class="rounded-pill bnt btn-info ps-4 pe-4 p-1"
+                    onclick="printDiv('{{invoice.invoice_number}}')"> <i
+                        class="bx bx-printer"></i> Print</button>
+
+            </p>
+        </div>
+    </div>
+    <section class="d-none">
+        <div id="my-invoice{{ invoice.invoice_number }}" class="border container p-5"
+            style="border: 2px solid black;">
+            <div class="text-end">
+                <button onclick="window.print()" class="btn btn-info">Print</button>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <h2>DY Revalutions LLC.</h2>
+                    <p class="p ps-1">
+                        Maxico,<br> New Yowrk <br> United States
+                        <br> 234345 <br>
+                        GST: 09AACCI7008M1ZB
+                    </p>
+                    <hr>
+                    <h4>Billing Information</h4>
+                    <p class="h6">{{invoice.user.first_name}}
+                        {{invoice.user.lase_name}} </p>
+                    <p class>
+                        {{invoice.user.email}}
+                    </p>
+                </div>
+                <div class="col-6">
+                    <div class="invoice text-end pe-3 pt-5">
+                        <h2>Invoice</h2>
+                        <p>{{invoice.invoice_number}} <br>
+                            {{ invoice.created_at|date:'M d, Y h:i:sA' }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <table class="table">
+                <tr>
+                    <th class="text-center">Product</th>
+                    <th>Quantity</th>
+                    <th class="text-end">Subtotal</th>
+                </tr>
+                {% for item in invoice.items %}
+                <tr>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>${{ item.unit_price }}</td>
+
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td></td>
+                    <td class="p">
+                        Sub Total <br>
+                        GST <br>
+                        Discount
+                        <hr>
+                        <span class="h2">Total</span>
+                    </td>
+                    <td class="p text-end">
+                        <i class="bx bx-dollar"></i> 
+                        <br>
+                        {{ invoice.tax_rate }}% <br>
+                        <i class="bx bx-dollar"></i> -0.00
+                        <hr>
+                        <span class="h2"> <i class="bx bx-dollar"></i>
+                            {{ invoice.amount }}</span>
+                    </td>
+                </tr>
+            </table>
+            <div class="text-center">
+            </div>
+        </div>
+
+       
+    </section>
+
+    {%endfor%}
+</section>
+{% endblock main %}
+
+{% block script %}
+<script>
+    function printDiv(id) {
+        // alert(id)
+        var divToPrint = document.getElementById("my-invoice" + id).outerHTML;
+        // divToPrint.classList.remove('d-none');
+        // divToPrint.classList.add('d-block');
+        var printWindow = window.open("", "_blank");
+        printWindow.document.open();
+        printWindow.document.write(
+            '<html><head><title>' + id + '</title>');
+        printWindow.document.write(
+            '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">'
+        );
+
+        printWindow.document.write(
+            '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">'
+        );
+        printWindow.document.write('</head><body>');
+        printWindow.document.write(divToPrint);
+        printWindow
+            .document.write('</body></html>');
+        printWindow.document.close();
+        // printWindow.print();
+        // divToPrint.classList.add('d-none');
+    }
+</script>
+{%endblock%}

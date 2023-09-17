@@ -29,13 +29,13 @@ def user_login(request):
                 if request.user.is_employee:
                     try:
                         subsidiary = request.user.employees.subsidiary
-                        return redirect(subsidiary.slug + "/employee")
+                        return redirect(subsidiary.slug + "/employee/")
                     except:
                         messages.error(request, "Profile Incompletea!")
                 elif request.user.is_client:
                     try:
                         subsidiary = request.user.clients.subsidiary
-                        return redirect(subsidiary.slug + "/client")
+                        return redirect(subsidiary.slug + "/client/")
                     except:
                         messages.error(request, "Profile Incomplete!")
                 else:
