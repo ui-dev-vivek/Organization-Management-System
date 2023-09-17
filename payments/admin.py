@@ -46,10 +46,10 @@ class PaymentHistoryAdmin(admin.ModelAdmin):
     readonly_fields = ('payment_date',) 
     list_per_page = 20  
        
-    def get_queryset(self, request):        
-        user_ids = [user.id for user in PaymentHistory.objects.filter(user__is_client=True).select_related('user').only('user')]
-        queryset = super().get_queryset(request).filter(user_id__in=user_ids)
-        return queryset    
+    # def get_queryset(self, request):        
+    #     user_ids = [user.uid for user in PaymentHistory.objects.filter(user__is_client=True).select_related('user').only('user')]
+    #     queryset = super().get_queryset(request).filter(user_id__in=user_ids)
+    #     return queryset    
 
     def user_full_name(self, obj):        
         return f'{obj.user.first_name} {obj.user.last_name}'

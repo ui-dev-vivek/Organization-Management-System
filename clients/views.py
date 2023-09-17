@@ -79,8 +79,8 @@ def invoices(request, subsidiary):
                 'last_name': user.last_name,               
             }
             invoice_data['user'] = user_data           
-            if user.address.exists():  
-                address = user.address.first()  
+            if user.address:  
+                address = user.address 
                 address_data = {
                     'street_address': address.street_address,
                     'apt_suite_number': address.apt_suite_number,
@@ -145,8 +145,7 @@ def upload_profile_image(request, subsidiary):
         img.save(resized_image_path)
 
         clients.profile_image = resized_image_path
-        clients.save()
-
+        clients.save()        
         image_url = clients.profile_image.url
         return JsonResponse({'image_url': image_url})
     else:

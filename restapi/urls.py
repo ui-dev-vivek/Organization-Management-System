@@ -5,6 +5,7 @@ from .views import *
 
 urlpatterns = [    
     path('login',login_api,name='login_api'),
+    path('client-registration/', ClientRegistrationAPIView.as_view(), name='client-registration'),
     path('organizations/', OrganizationListView.as_view(), name='org-list'),
     path('organization/', OrganizationDetailView.as_view(), name='org-data'),
     path('subsidiaries/', SubsidiariesListCreateView.as_view(), name='subsidiaries-list-create'),
@@ -13,5 +14,6 @@ urlpatterns = [
     path('subsidiaries-projects-budgets/',SubsidiariesDetailsView.as_view(), name='subsidiaries-projects-budgets-list'),
     path('projects-details/',ProjectDetailsWithEmployeeAndClientView.as_view(), name='projects-details'), 
     path('invoices/', InvoiceListCreateView.as_view(), name='invoice-list-create'),  
+    path('payment-history/', PaymentHistoryAPIView.as_view(), name='payment-history'),
 
 ]

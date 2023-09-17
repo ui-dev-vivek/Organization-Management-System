@@ -1,4 +1,5 @@
 from rest_framework.generics import ListAPIView,RetrieveAPIView
+from rest_framework.views import APIView
 # from rest_framework.generics import RetrieveAPIView
 from rest_framework import generics,permissions
 from employees.models import Employees
@@ -216,3 +217,44 @@ class InvoiceListCreateView(generics.ListCreateAPIView):
         serializer = InvoiceSerializer(invoice)
 
         return Response(serializer.data)
+    
+class PaymentHistoryAPIView(generics.ListCreateAPIView):
+    queryset = PaymentHistory.objects.all()
+    serializer_class = PaymentHistorySerializer
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    
+    
+    
+    
+class ClientRegistrationAPIView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        form = ClientForm(request.POST)
+        if form.is_valid():
+            # Create a new User
+            user = User.objects.create_user(
+                username=form.cleaned_data['username'],
+                email=form.cleaned_data['email'],
+                password=form.cleaned_data['password'],
+                first_name=form.cleaned_data['first_name'],
+                last_name=form.cleaned_data['last_name']
+            )
+
+            # Create a new Client
+            client = Clients.objects.create(
+                user=user,
+                organization_name=form.cleaned_data['organization_name'],
+                phone_no=form.cleaned_data['phone_no'],
+                street_address=form.cleaned_data['street_address'],
+                apt_suite_number=form.cleaned_data['apt_suite_number'],
+                city=form.cleaned_data['city'],
+                state=form.cleaned_data['state'],
+                zip_code=form.cleaned_data['zip_code'],
+                country=form.cleaned_data['country']
+            )
+
+            return Response({'message': 'Client registered successfully.'}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({'errors': form.errors}, status=status.HTTP_400_BAD_REQUEST)

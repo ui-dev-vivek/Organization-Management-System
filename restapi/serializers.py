@@ -5,7 +5,7 @@ from subsidiaries.models import Organizations,Subsidiaries,Budgets
 from employees.models import Employees
 from clients.models import Clients
 from projects.models import Projects,EmployeeOnProject,ClientOnProject
-from payments.models import Invoice, Item
+from payments.models import Invoice, Item,PaymentHistory
 
 class BudgetSerializer(serializers.ModelSerializer):
     class Meta:
@@ -92,3 +92,7 @@ class InvoiceSerializer(serializers.ModelSerializer):
 
 
     
+class PaymentHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PaymentHistory
+        fields = '__all__'
