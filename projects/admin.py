@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Projects, EmployeeOnProject, ClientOnProject
+from .models import Projects, EmployeeOnProject, ClientOnProject,TaskChecklist,ProjectTask,Attachments
 
 
 class EmployeeOnProjectForm(admin.StackedInline):
@@ -38,5 +38,8 @@ class ClientOnProjectAdmin(admin.ModelAdmin):
     ordering = ['subsidiary__name']      
     autocomplete_fields = ['clients']
 
+admin.site.register(ProjectTask)
+admin.site.register(TaskChecklist)
+admin.site.register(Attachments)
 
 # Code Cloded!
