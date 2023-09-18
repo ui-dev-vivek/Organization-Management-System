@@ -43,12 +43,21 @@ class ClientOnProject(BaseModel):
         return self.clients.user.first_name +" "+self.clients.user.last_name
 
 class ProjectTask(BaseModel):
+    PROJECT_STATE = [
+        ('todo', _('Todo')),
+        ('dowing', _('Doing')),
+        ('done', _('Done')),
+        ('testing', _('Testing')),
+        ('done', _('Done')),
+    ]
+     
     project = models.ForeignKey(Projects, on_delete=models.CASCADE)
     assigned_to = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     description = models.TextField()
     start_date = models.DateTimeField(auto_now_add=True)
     end_date = models.DateTimeField(null=True)
+    state = models.CharField(max_length=20, choices=PROJECT_STATE,default='todo')
 
     def __str__(self):
         return self.title

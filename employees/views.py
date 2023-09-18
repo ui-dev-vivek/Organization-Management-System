@@ -1,4 +1,4 @@
-from django.shortcuts import HttpResponse, render
+from django.shortcuts import HttpResponse, render,get_object_or_404
 import os
 from django.core.exceptions import ObjectDoesNotExist
 from .decorators import is_employee
@@ -8,6 +8,8 @@ from django.http import request, JsonResponse
 from employees.models import Employees
 from PIL import Image
 from django.contrib import messages
+from authapp.models import User
+from projects.models  import ProjectTask, Projects,TaskChecklist
 
 
 
@@ -53,15 +55,93 @@ def project(request, subsidiary, slug):
             'profile_image':employee_data.profile_image.url        
         }     
         members.append(employee_with_user)
+        
+    project_tasks = ProjectTask.objects.filter(project=project)
+    tasks_data = []
 
+    for task in project_tasks:
+        checklist_items = TaskChecklist.objects.filter(project_task=task)
+        total_checklist_count = checklist_items.count()
+        checked_count = checklist_items.filter(status=True).count()
+        if(total_checklist_count !=0):
+            progress=(checked_count/total_checklist_count)*100
+        else:
+            progress=0
+        task_data = {
+            'task': task,
+            'checklist_items': checklist_items,
+            'checked': checked_count,
+            'taskchecklistcount': total_checklist_count,
+            'progress':progress
+        }
+        tasks_data.append(task_data)
     data = {
         'project': project,
         'userproject': userproject,
-        'members': members
+        'members': members,
+        'tasks_data':tasks_data
     }
 
     return render(request, 'employee/project.html', data)
 
+
+@is_employee
+def project_task_view(request, subsidiary):
+    if request.method == 'POST':
+        try:
+            data = request.POST  # Assuming data is sent via POST form data
+
+            # Assuming data includes project_id, title, description, and assigned_to_id
+            project = data.get('project')
+            title = data.get('title')
+            description = data.get('description')
+            
+
+            # Assuming assigned_to_id is the ID of the assigned user
+            
+            end_date=data.get('end_date')
+            # Assuming project_id is the ID of the associated project
+            project = get_object_or_404(Projects, id=project)
+
+            task = ProjectTask.objects.create(
+                project=project,
+                assigned_to=request.user,
+                title=title,
+                description=description,
+                end_date=end_date
+            )
+
+            return JsonResponse({'task_id': task.title}, status=201)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+
+    elif request.method == 'PUT':
+        try:
+            data = request.POST  # Assuming data is sent via POST form data
+
+            # Assuming data includes title, description, and assigned_to_id
+            title = data.get('title')
+            description = data.get('description')
+            assigned_to_id = data.get('assigned_to_id')
+
+            task = get_object_or_404(ProjectTask, id=task_id)
+
+            # Update the task fields if provided in the request
+            if title:
+                task.title = title
+            if description:
+                task.description = description
+            if assigned_to_id:
+                assigned_to = get_object_or_404(User, id=assigned_to_id)
+                task.assigned_to = assigned_to
+
+            task.save()
+
+            return JsonResponse({'task_id': task.id}, status=200)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
 
 
 
