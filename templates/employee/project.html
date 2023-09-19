@@ -38,8 +38,9 @@
           <div class="card-subtitle text-muted mb-3">Project Managmanet</div>
           <p class="card-text">
             {% for task_data in tasks_data %}
-          <div class="task  mt-2 p-2  ps-3 pt-3 rounded shadow">
-            <p>{{ task_data.task.title }}</p>
+       
+           <div class="task  mt-2 p-2  ps-3 pt-3 rounded shadow">
+            <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#maintaskModal{{ task_data.task.uid}}"><p>{{ task_data.task.title }}</p></a>
             <div class="row">
               <div class="col-sm-4"><span class="ps-2"><i class='bx bx-check-square'></i> {{ task_data.checked }}/{{ task_data.taskchecklistcount }}</span></div>
               <div class="col-sm-4">
@@ -56,21 +57,88 @@
             </div>
             {% endif %}
           </div>
+          <div class="modal fade" id="maintaskModal{{ task_data.task.uid}}" tabindex="-1" aria-labelledby="taskModal{{ task_data.task.uid}}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="taskModal{{ task_data.task.uid}}">Edit Task:</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <form action="{% url 'update_project_task' subsidiary %}" method="post">
+                    {%csrf_token%}
+                    <input type="hidden" name="project" value="{{ project.id}}">
+                    <input type="hidden" value="{{task_data.task.uid}}" name="task_id">
+                  <div class="mt-2 mb-3">              
+                    <input id="largeInput"  name="title" class="form-control form-control-lg border-0" type="text" value="{{ task_data.task.title}}" placeholder="Title">
+                  </div>
+                  <div class="row">
+                    <div class="col-8">
+                      <div class="task-main">             
+                        <div class="input-group input-group-merge speech-to-text">
+                          <textarea class="form-control border-0" name="description" placeholder="Description"  rows="7">{{ task_data.task.description}}</textarea>
+                          <span class="input-group-text">
+                            <i class="bx bx-microphone cursor-pointer text-to-speech-toggle"></i>
+                          </span>
+                        </div>
+                        <div class="task-checklist-section mt-3 ps-3">
+                          <h5><i class="bx bx-list-check"></i> Checklist</h5>
+                          <hr>
+                          <div id="allChecklist{{ task_data.task.uid }}" class="">
+                            {% for checklist_item in task_data.checklist_items %}
+                            <input type="hidden" name="checklist_id[]" value="{{ checklist_item.uid }}">
+                            <div class="row">
+                              <div class="col-1 text-end d-flex align-items-center justify-content-center">
+                                <input class="form-check-input" value="{{ checklist_item.uid }}"  type="checkbox" name="status[]" {% if checklist_item.status %}Checked {% else %}Unchecked {% endif %}>
+                              </div>
+                              <div class="col-10">
+                                <input class="form-control  border-0" type="text" value="{{ checklist_item.title }}" name="titles[]" placeholder="Check List">
+                              </div>
+                              <div class="col-1 d-flex align-items-center justify-content-center">
+                                <i class="bx bx-trash text-danger"> </i>
+                              </div>
+                            </div>
+                            {% endfor %}
+                          </div>
+                          <a href="javascript:void(0)" id="addChecklist" onclick='addChecklistItem("{{ task_data.task.uid }}")' class="card-link"><i class="bx bx-plus"> </i> Add Checklist
+                          </a>
+                        </div>                       
+
+                      </div>
+                    </div>
+                    <div class="col-4">   
+                      <p class="ps-3">User: {{ request.user.first_name }}</p>                     
+                      <input class="form-control border-0"  type="datetime-local" name="end_date"  id="html5-datetime-local-input" value="{{ task_data.task.end_date|date:'Y-m-d' }}T{{ task_data.task.end_date|date:'h:i' }}" placeholder="Last Date">
+                    
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+              </div>
+            </form>
+            </div>
+          </div>          
+
+
+
           {% endfor %}
        
           </p>
-          <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#exampleModal" class="card-link"><i class="bx bx-plus"></i> Add New</a>
+          <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#maintaskModal" class="card-link"><i class="bx bx-plus"></i> Add New</a>
           
         </div>
       </div>
     </section>
   
 
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="maintaskModal" tabindex="-1" aria-labelledby="taskModal" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Add Task:</h1>
+        <h1 class="modal-title fs-5" id="taskModal">Add Task:</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -148,5 +216,37 @@
 </div>
 
 {% endblock main %}
+{% block script %}
+<script>
+ 
+  function addChecklistItem(id) {
+    
+    const checklistItemsDiv = document.getElementById('allChecklist'+id);
+    const newChecklistItem = document.createElement('div');
+    newChecklistItem.className = 'checklist-item';
+    newChecklistItem.innerHTML = `
+    <input type="hidden" name="checklist_id[]" value="no">
+    <div class="row">
+     <div class="col-1 text-end d-flex align-items-center justify-content-center">
+       <input class="form-check-input" type="checkbox" status[]>
+      </div>
+      <div class="col-10">
+      <input class="form-control  border-0" type="text" name="titles[]">
+    </div>
+     <div class="col-1 d-flex align-items-center justify-content-center">     
+      
+      </div>
+     </div>           
+        `;
+    checklistItemsDiv.appendChild(newChecklistItem);
+  }
 
+  function removeChecklistItem(button,id) {
+    alert()
+    const checklistItemsDiv = document.getElementById('allChecklist'+id);
+    checklistItemsDiv.removeChild(button.parentElement);
+  }
+
+</script>
+    {% endblock script %}
 
