@@ -1,4 +1,4 @@
-from django.shortcuts import HttpResponse, render,get_object_or_404
+from django.shortcuts import HttpResponse, render,get_object_or_404,redirect
 import os
 from django.core.exceptions import ObjectDoesNotExist
 from .decorators import is_employee
@@ -116,32 +116,46 @@ def project_task_view(request, subsidiary):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
 
-    elif request.method == 'PUT':
-        try:
-            data = request.POST  # Assuming data is sent via POST form data
+@is_employee
+def update_project_task(request, subsidiary):    
+    try:
+        task = get_object_or_404(ProjectTask, uid=request.POST.get('task_id'))     
+        task.title = request.POST.get('title', task.title)
+        task.description = request.POST.get('description', task.description)
+        task.end_date = request.POST.get('end_date', task.end_date)
+        task.save()
 
-            # Assuming data includes title, description, and assigned_to_id
-            title = data.get('title')
-            description = data.get('description')
-            assigned_to_id = data.get('assigned_to_id')
-
-            task = get_object_or_404(ProjectTask, id=task_id)
-
-            # Update the task fields if provided in the request
-            if title:
-                task.title = title
-            if description:
-                task.description = description
-            if assigned_to_id:
-                assigned_to = get_object_or_404(User, id=assigned_to_id)
-                task.assigned_to = assigned_to
-
-            task.save()
-
-            return JsonResponse({'task_id': task.id}, status=200)
-
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
+        # Get checklist items from the form
+        checklist_ids=request.POST.getlist('checklist_id[]')
+        titles = request.POST.getlist('titles[]')
+        
+        statuses = request.POST.getlist('status[]')       
+        
+        projecttask = get_object_or_404(ProjectTask, uid=request.POST.get('task_id'))
+        
+        # Update or insert TaskChecklist items
+        for i in range(len(checklist_ids)-1):          
+            
+            if checklist_ids[i] != "no":                
+                checklist_item = get_object_or_404(TaskChecklist, uid=checklist_ids[i] )
+                checklist_item.title = titles[i]
+                checklist_item.status = True if checklist_ids[i]  in statuses else False
+                checklist_item.save()
+                
+            else:                
+                # Insert new TaskChecklist item
+                TaskChecklist.objects.create(
+                    project_task=projecttask,
+                    title=titles[i],
+                    status=False
+                )
+        
+        messages.success(request, "Task and checklist updated successfully.") 
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+        messages.error(request, "Falied To Create checklist.") 
+    return redirect(request.META.get('HTTP_REFERER'))
+    
 
 
 
