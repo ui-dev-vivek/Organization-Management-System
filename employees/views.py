@@ -216,15 +216,8 @@ def upload_attachment(request, subsidiary):
             attachment_file=os.path.join("attachments", attachment.name),
         )
 
-        return JsonResponse(
-            {
-                "message": "Attachment uploaded successfully.",
-                "attachment_uid": attachment_instance.uid,
-            },
-            status=200,
-        )
-
-    return JsonResponse({"error": "No attachment found in the request."}, status=400)
+        messages.success(request, "Attachment File Uploaded!")
+    return redirect(request.META.get("HTTP_REFERER"))
 
 
 # XHttp
@@ -241,6 +234,25 @@ def delete_project_task(request, subsidiary, task_id):
 def delete_project_task_checklist(request, subsidiary, task_id):
     try:
         task = get_object_or_404(TaskChecklist, uid=task_id)
+        task.delete()
+        return redirect(request.META.get("HTTP_REFERER"))
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=400)
+
+
+@is_employee
+def delete_project_task(request, subsidiary, task_id):
+    try:
+        task = get_object_or_404(ProjectTask, uid=task_id)
+        task.delete()
+        return JsonResponse({"message": "Task deleted successfully."}, status=200)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=400)
+
+
+def delete_attachment(request, subsidiary, task_id):
+    try:
+        task = get_object_or_404(Attachments, uid=task_id)
         task.delete()
         return redirect(request.META.get("HTTP_REFERER"))
     except Exception as e:

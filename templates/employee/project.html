@@ -34,7 +34,7 @@
     <section>
       <div class="card mb-4">
         <div class="card-body">
-          <h5 class="card-title">Tasks</h5>
+          <h5 class="card-title"><i class='bx bx-customize'></i>  Tasks</h5>
           <div class="card-subtitle text-muted mb-3">Project Managmanet</div>
           <p class="card-text menu">
             {% for task_data in tasks_data %}
@@ -44,7 +44,7 @@
             <div class="row">
               <div class="col-sm-4"><span class="ps-2"><i class='bx bx-check-square'></i> {{ task_data.checked }}/{{ task_data.taskchecklistcount }}</span></div>
               <div class="col-sm-4">
-                State: {{ task_data.task.state }}              
+                <i class='bx bx-checkbox-square {{ task_data.task.state }}'></i> {{ task_data.task.state|title }}              
               </div>
               <div class="col-sm-4 text-end">
                 <a href="javascript:void()" onclick="deleteTask('{{task_data.task.uid }}','{{ csrf_token }}')"><i class="bx bx-trash text-danger"></i></a> &nbsp; &nbsp; &nbsp; &nbsp;
@@ -62,7 +62,7 @@
             <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h1 class="modal-title fs-5" id="taskModal{{ task_data.task.uid}}">Edit Task:</h1>
+                  <h1 class="modal-title fs-5" id="taskModal{{ task_data.task.uid}}"><i class="bx bx-edit"></i>   Edit Task:</h1>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -70,17 +70,19 @@
                     {%csrf_token%}
                     <input type="hidden" name="project" value="{{ project.id}}">
                     <input type="hidden" value="{{task_data.task.uid}}" name="task_id">
-                  <div class="mt-2 mb-3">              
+                  <div class="mt-2 mb-3">  
+                    <label for="largeInput" class="text-black" >Title:</label>            
                     <input id="largeInput"  name="title" class="form-control form-control-lg border-0" type="text" value="{{ task_data.task.title}}" placeholder="Title">
                   </div>
                   <div class="row">
                     <div class="col-8">
-                      <div class="task-main">             
-                        <div class="input-group input-group-merge speech-to-text">
-                          <textarea class="form-control border-0" name="description" placeholder="Description"  rows="7">{{ task_data.task.description}}</textarea>
-                          <span class="input-group-text">
+                      <div class="task-main">  
+                        <label for="desc-task" class="text-black">Description:</label>           
+                        <div class="input-group input-group-merge ">                         
+                          <textarea id="desc-task" class="form-control border-0" name="description" placeholder="Description"  rows="2">{{ task_data.task.description}}</textarea>
+                          <!-- <span class="input-group-text">
                             <i class="bx bx-microphone cursor-pointer text-to-speech-toggle"></i>
-                          </span>
+                          </span> -->
                         </div>
                         <div class="task-checklist-section mt-3 ps-3">
                           <h5><i class="bx bx-list-check"></i> Checklist</h5>
@@ -108,8 +110,9 @@
                       </div>
                     </div>
                     <div class="col-4">   
-                      <p class="ps-3">User: {{ request.user.first_name }}</p>                     
-                      <input class="form-control border-0"  type="datetime-local" name="end_date"  id="html5-datetime-local-input" value="{{ task_data.task.end_date|date:'Y-m-d' }}T{{ task_data.task.end_date|date:'h:i' }}" placeholder="Last Date">
+                      <p class="ps-3"><i class="bx bx-user"> </i> {{ request.user.first_name }} {{ request.user.last_name }}</p></p>          
+                      <label for="html5-datetime-local-input" class="text-danger ps-3"> <i class="bx bx-time"></i> Deadline</label>           
+                    <input class="form-control border-0"  type="datetime-local" name="end_date"  id="html5-datetime-local-input" value="{{ task_data.task.end_date|date:'Y-m-d' }}T{{ task_data.task.end_date|date:'h:i' }}" placeholder="Last Date">
                     
                     </div>
                   </div>
@@ -241,9 +244,11 @@
           <div class="card-body">
             <ul class="p-0 m-0">
               {% for attachment in attachments%}
-              <li class="d-flex mb-4 pb-1">
+              <div id="atc-{{attachment.id }}">
+              <li class="d-flex mb-4 pb-1" >
+               
                 <div class="avatar flex-shrink-0 me-3">
-                  <span class="avatar-initial rounded bg-label-primary"><i class="bx bx-cloud-download"></i></span>
+                  <span class="avatar-initial rounded bg-label-primary" onclick="downloadFile('/media/attachments/{{attachment.attachment_file}}','{{project.slug}}-{{ attachment.attachment_file }}' )"><i class="bx bx-cloud-download"></i></span>
                 </div>
                 <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                   <div class="me-2">
@@ -251,10 +256,11 @@
                     <small class="text-muted">{{ attachment.attachment_file }}</small>
                   </div>
                   <div class="user-progress">
-                    <i class="bx bx-trash"></i>
+                    <i class="bx bx-trash" onclick="deleteAttachment('{{attachment.id }}','{{ csrf_token }}')"></i>
                   </div>
                 </div> 
-              </li>
+              
+              </li></div>
               {% endfor %}
             </ul>
           </div>

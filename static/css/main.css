@@ -62,3 +62,7 @@
       #file-file {
         display: none;
       }
+    
+.todo {
+  color: rgb(168, 168, 13) !important;
+}
