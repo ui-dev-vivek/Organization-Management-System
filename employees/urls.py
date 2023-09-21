@@ -12,5 +12,6 @@ urlpatterns = [
     path('update-project-task/',update_project_task,name="update_project_task"),
     path('project_task/<str:task_id>/delete/', delete_project_task, name='delete_project_task'),
     path('project_task_checklist/<str:task_id>/delete/', delete_project_task_checklist, name='delete_project_task_checklist'),
-     path('upload_attachment/', upload_attachment, name='upload_attachment'),
+    path('upload_attachment/', upload_attachment, name='upload_attachment'),
+    path('attachment/<str:task_id>/delete/', delete_attachment, name='delete_attachment'),
 ]
