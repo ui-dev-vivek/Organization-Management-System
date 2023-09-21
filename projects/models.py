@@ -73,10 +73,10 @@ class TaskChecklist(BaseModel):
 class Attachments(BaseModel):
     project = models.ForeignKey(Projects, on_delete=models.CASCADE)
     upload_by = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
+    file_name = models.CharField(max_length=255)
     attachment_file = models.FileField(upload_to='static/attachments/')
 
     def __str__(self):
-        return str(self.name)
+        return str(self.file_name)
 
 #code Closed!

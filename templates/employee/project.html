@@ -1,14 +1,14 @@
 {% extends 'layouts/employee/base.html' %}
 {% load static %}
 {% block main %}
-<section class="card p-3">      
+<section class="card p-3 mb-0 pb-0">      
     <div class="row">
         <div class="col-sm-8">
             <h4 class="h4" > <img width="30" src="{% static 'images/projects_icon.png' %}" alt=""> {{project.project_name}}</h4>
             <p></p>
             {{userproject.assigned_date}}
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-4 mb-0 pb-0 pt-2">
             <p class="text-primary text-capitalize h5">
                 <i class='bx bx-circle bx-flashing' ></i> {{project.status}}
             </p>
@@ -17,7 +17,7 @@
 </section>
 <div class="row">
   <div class="col-sm-8 mt-4">
-    <div class="card p-3">
+    <div class="card p-3 ">
       <div class="row">
         <div class="col-sm">
           <h5 class=""><i class="bx bx-alarm text-success bx-flashing" ></i> Start at:  {{project.start_date|date:'M d, Y'}}</5>
@@ -36,10 +36,10 @@
         <div class="card-body">
           <h5 class="card-title">Tasks</h5>
           <div class="card-subtitle text-muted mb-3">Project Managmanet</div>
-          <p class="card-text">
+          <p class="card-text menu">
             {% for task_data in tasks_data %}
        
-           <div class="task  mt-2 p-2  ps-3 pt-3 rounded shadow">
+           <div id="task-{{task_data.task.uid }}" class="task   mt-2 p-2  ps-3 pt-3 rounded shadow " data-toggle="tooltip">
             <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#maintaskModal{{ task_data.task.uid}}"><p>{{ task_data.task.title }}</p></a>
             <div class="row">
               <div class="col-sm-4"><span class="ps-2"><i class='bx bx-check-square'></i> {{ task_data.checked }}/{{ task_data.taskchecklistcount }}</span></div>
@@ -47,7 +47,7 @@
                 State: {{ task_data.task.state }}              
               </div>
               <div class="col-sm-4 text-end">
-                <i class="bx bx-trash text-danger"></i> &nbsp; &nbsp; &nbsp; &nbsp;
+                <a href="javascript:void()" onclick="deleteTask('{{task_data.task.uid }}','{{ csrf_token }}')"><i class="bx bx-trash text-danger"></i></a> &nbsp; &nbsp; &nbsp; &nbsp;
               </div>
             </div>
             {% if task_data.progress != 0 %}
@@ -56,9 +56,10 @@
                 style="width: {{task_data.progress}}%" aria-valuenow="{{task_data.progress}}" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
             {% endif %}
-          </div>
+          
+
           <div class="modal fade" id="maintaskModal{{ task_data.task.uid}}" tabindex="-1" aria-labelledby="taskModal{{ task_data.task.uid}}" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
               <div class="modal-content">
                 <div class="modal-header">
                   <h1 class="modal-title fs-5" id="taskModal{{ task_data.task.uid}}">Edit Task:</h1>
@@ -87,7 +88,7 @@
                           <div id="allChecklist{{ task_data.task.uid }}" class="">
                             {% for checklist_item in task_data.checklist_items %}
                             <input type="hidden" name="checklist_id[]" value="{{ checklist_item.uid }}">
-                            <div class="row">
+                            <div class="row" id="checklist-{{checklist_id}}">
                               <div class="col-1 text-end d-flex align-items-center justify-content-center">
                                 <input class="form-check-input" value="{{ checklist_item.uid }}"  type="checkbox" name="status[]" {% if checklist_item.status %}Checked {% else %}Unchecked {% endif %}>
                               </div>
@@ -95,7 +96,7 @@
                                 <input class="form-control  border-0" type="text" value="{{ checklist_item.title }}" name="titles[]" placeholder="Check List">
                               </div>
                               <div class="col-1 d-flex align-items-center justify-content-center">
-                                <i class="bx bx-trash text-danger"> </i>
+                               <a href="javascript:void(0)" onclick="deleteTaskChecklist('{{ checklist_item.uid }}','{{ csrf_token }}')"> <i class="bx bx-trash text-danger"> </i></a>
                               </div>
                             </div>
                             {% endfor %}
@@ -120,7 +121,7 @@
               </div>
             </form>
             </div>
-          </div>          
+          </div> </div>         
 
 
 
@@ -135,7 +136,7 @@
   
 
 <div class="modal fade" id="maintaskModal" tabindex="-1" aria-labelledby="taskModal" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
+  <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
         <h1 class="modal-title fs-5" id="taskModal">Add Task:</h1>
@@ -150,7 +151,7 @@
         </div>
         <div class="row">
           <div class="col-8">
-            <div class="task-main">             
+            <div class="task-main ">             
               <div class="input-group input-group-merge speech-to-text">
                 <textarea class="form-control" name="description" placeholder="Description" rows="7"></textarea>
                 <span class="input-group-text">
@@ -160,8 +161,7 @@
 
             </div>
           </div>
-          <div class="col-4">   
-              
+          <div class="col-4">                
             <input class="form-control"  type="datetime-local" name="end_date"  id="html5-datetime-local-input" placeholder="Last Date">
             <div class="input-group mt-3">
               <span class="input-group-text" id="basic-addon11">@</span>
@@ -183,7 +183,7 @@
   <div class="col-sm-4">
       <div class="card mt-4">
           <div class="card-header d-flex align-items-center justify-content-between">
-            <h5 class="card-title m-0 me-2">Team Members</h5>             
+            <h5 class="card-title m-0 me-2"><i class='bx bxs-user-detail'></i> Team Members</h5>             
           </div>
           <div class="card-body">
             <ul class="p-0 m-0">
@@ -200,7 +200,7 @@
                     </div>
                     <div class="user-progress d-flex align-items-center gap-1">
                       <h6 class="mb-0">{% if member.is_lead %}
-                          Lead
+                        <i class='bx bx-user-check text-primary'></i>
                       {% endif %}</h6>
                       <span class="text-muted"></span>
                     </div>
@@ -211,42 +211,60 @@
            
             </ul>
           </div>
-        </div>     
+        </div>  
+        <div class="card mt-4">
+          <div class="card-header d-flex align-items-center justify-content-between">
+            <h5 class="card-title m-0 me-2"><i class="bx bx-upload"></i> Upload </h5>
+          </div>
+          <div class="card-body">
+            <form action="{% url 'upload_attachment' subsidiary %}" method="post" enctype="multipart/form-data">
+              <div class="container-file">
+                  {%csrf_token%}
+                <input type="hidden" name="project_id" value="{{ project.id}}">
+                <label for="file-file" class="footer-file">
+                  <i class="bx bx-right-arrow-circle"> </i>
+                  <p class="pt-3"> Select File!</p>
+                  <i class="bx bx-cloud-upload" style="font-size: 40px;"></i>
+                </label>
+                <input id="file-file" type="file" name="attachment">
+                <input class="form-control" name="file_name" type="text" placeholder="File Name" required>
+                <input class="w-100 btn btn-primary " type="submit">
+    
+              </div>
+            </form>
+          </div>
+        </div>   
+        <div class="card mt-4">
+          <div class="card-header d-flex align-items-center justify-content-between">
+            <h5 class="card-title m-0 me-2"><i class="bx bx-folder-open"></i> Attachments </h5>
+          </div>
+          <div class="card-body">
+            <ul class="p-0 m-0">
+              {% for attachment in attachments%}
+              <li class="d-flex mb-4 pb-1">
+                <div class="avatar flex-shrink-0 me-3">
+                  <span class="avatar-initial rounded bg-label-primary"><i class="bx bx-cloud-download"></i></span>
+                </div>
+                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                  <div class="me-2">
+                    <h6 class="mb-0">{{ attachment.file_name}}</h6>
+                    <small class="text-muted">{{ attachment.attachment_file }}</small>
+                  </div>
+                  <div class="user-progress">
+                    <i class="bx bx-trash"></i>
+                  </div>
+                </div> 
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>   
   </div>
 </div>
 
 {% endblock main %}
 {% block script %}
-<script>
- 
-  function addChecklistItem(id) {
-    
-    const checklistItemsDiv = document.getElementById('allChecklist'+id);
-    const newChecklistItem = document.createElement('div');
-    newChecklistItem.className = 'checklist-item';
-    newChecklistItem.innerHTML = `
-    <input type="hidden" name="checklist_id[]" value="no">
-    <div class="row">
-     <div class="col-1 text-end d-flex align-items-center justify-content-center">
-       <input class="form-check-input" type="checkbox" status[]>
-      </div>
-      <div class="col-10">
-      <input class="form-control  border-0" type="text" name="titles[]">
-    </div>
-     <div class="col-1 d-flex align-items-center justify-content-center">     
-      
-      </div>
-     </div>           
-        `;
-    checklistItemsDiv.appendChild(newChecklistItem);
-  }
 
-  function removeChecklistItem(button,id) {
-    alert()
-    const checklistItemsDiv = document.getElementById('allChecklist'+id);
-    checklistItemsDiv.removeChild(button.parentElement);
-  }
-
-</script>
+<script src="{% static 'js/project.js'%}"></script>
     {% endblock script %}
 

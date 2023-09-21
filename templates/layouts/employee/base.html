@@ -1,122 +1,144 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en"
-class="light-style layout-menu-fixed">
-  <head>
-    <meta charset="utf-8" />
-    <meta  name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+<html lang="en" class="light-style layout-menu-fixed">
 
-    <title>Dashboard</title>
-    <meta name="description" content="" />
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="{{request.user.employees.subsidiary.logo.url}}" />
+  <title>Dashboard</title>
+  <meta name="description" content="" />
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
-      rel="stylesheet"/>
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="{{request.user.employees.subsidiary.logo.url}}" />
 
-    <!-- Icons. Uncomment required icon fonts -->
-    <link rel="stylesheet" href="{% static 'themes/vendor/fonts/boxicons.css'%}" />
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+    rel="stylesheet" />
 
-    <!-- Core CSS -->
-    <link rel="stylesheet" href="{% static 'themes/vendor/css/core.css'%}" class="template-customizer-core-css" />
-    <link rel="stylesheet" href="{% static 'themes/vendor/css/theme-default.css'%}" class="template-customizer-theme-css" />
-    <link rel="stylesheet" href="{% static 'themes/css/demo.css'%}" />
+  <!-- Icons. Uncomment required icon fonts -->
+  <link rel="stylesheet" href="{% static 'themes/vendor/fonts/boxicons.css'%}" />
 
-    <!-- Vendors CSS -->
-    <link rel="stylesheet" href="{% static 'themes/vendor/libs/perfect-scrollbar/perfect-scrollbar.css'%}" />
+  <!-- Core CSS -->
+  <link rel="stylesheet" href="{% static 'themes/vendor/css/core.css'%}" class="template-customizer-core-css" />
+  <link rel="stylesheet" href="{% static 'themes/vendor/css/theme-default.css'%}"
+    class="template-customizer-theme-css" />
+  <link rel="stylesheet" href="{% static 'themes/css/demo.css'%}" />
 
-    <link rel="stylesheet" href="{% static 'themes/vendor/libs/apex-charts/apex-charts.css'%}" />
+  <!-- Vendors CSS -->
+  <link rel="stylesheet" href="{% static 'themes/vendor/libs/perfect-scrollbar/perfect-scrollbar.css'%}" />
 
-    <!-- Page CSS -->
+  <link rel="stylesheet" href="{% static 'themes/vendor/libs/apex-charts/apex-charts.css'%}" />
 
-    <!-- Helpers -->
-    <script src="{% static 'themes/vendor/js/helpers.js'%}"></script>
+  <!-- Page CSS -->
 
-    
-    <script src="{% static 'themes/js/config.js'%}"></script>
+  <!-- Helpers -->
+  <script src="{% static 'themes/vendor/js/helpers.js'%}"></script>
 
-    <!-- CSS-->
-    <link rel="stylesheet" href="{% static 'css/main.css'%}" />
-    {% block css %}{% endblock css %}
-  </head>
 
-  <body>
-    <!-- Layout wrapper -->
-    <div class="layout-wrapper layout-content-navbar">
-      <div class="layout-container">
-        {% include 'layouts/employee/side.html' %}
+  <script src="{% static 'themes/js/config.js'%}"></script>
 
-        <!-- Layout container -->
-        <div class="layout-page">
-          {% include 'layouts/employee/nav.html' %}
+  <!-- CSS-->
+  <link rel="stylesheet" href="{% static 'css/main.css'%}" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/draggable/1.0.0-beta.12/draggable.bundle.js"></script>
+  {% block css %}{% endblock css %}
+</head>
 
-          <!-- Content wrapper -->
-          <div class="content-wrapper">
-            <!-- Content -->
+<body>
+  <!-- Layout wrapper -->
+  <div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+      {% include 'layouts/employee/side.html' %}
 
-            <div class="container-xxl flex-grow-1 container-p-y">
-              <br>
-             {% block main %}{% endblock main %}
-            </div>
-          
+      <!-- Layout container -->
+      <div class="layout-page">
+        {% include 'layouts/employee/nav.html' %}
 
-            <!-- Footer -->
-            <footer class="content-footer footer bg-footer-theme">
-              <div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
-                <div class="mb-2 mb-md-0 text-center">
-                  ©
-                  <script>
-                    document.write(new Date().getFullYear());
-                  </script>
-                  
-                  <a href="" target="_blank" class="footer-link fw-bolder">DY Revalutation </a>
-                </div>
-                
-            </footer>
-            <!-- / Footer -->
+        <!-- Content wrapper -->
+        <div class="content-wrapper">
+          <!-- Content -->
 
-            <div class="content-backdrop fade"></div>
+          <div class="container-xxl flex-grow-1 container-p-y">
+            <br>
+            {% block main %}{% endblock main %}
           </div>
-          <!-- Content wrapper -->
+
+
+          <!-- Footer -->
+          <footer class="content-footer footer bg-footer-theme">
+            <div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
+              <div class="mb-2 mb-md-0 text-center">
+                ©
+                <script>
+                  document.write(new Date().getFullYear());
+                </script>
+
+                <a href="" target="_blank" class="footer-link fw-bolder">DY Revalutation </a>
+              </div>
+
+          </footer>
+          <!-- / Footer -->
+
+          <div class="content-backdrop fade"></div>
         </div>
-        <!-- / Layout page -->
+        <!-- Content wrapper -->
       </div>
-
-      <!-- Overlay -->
-      <div class="layout-overlay layout-menu-toggle"></div>
+      <!-- / Layout page -->
     </div>
-    <!-- / Layout wrapper -->
 
-   
+    <!-- Overlay -->
+    <div class="layout-overlay layout-menu-toggle"></div>
+  </div>
+  <!-- / Layout wrapper -->
 
-    <!-- Core JS -->
-    <!-- build:js assets/vendor/js/core.js'%} -->
-    <script src="{% static 'themes/vendor/libs/jquery/jquery.js'%}"></script>
-    <script src="{% static 'themes/vendor/libs/popper/popper.js'%}"></script>
-    <script src="{% static 'themes/vendor/js/bootstrap.js'%}"></script>
-    <script src="{% static 'themes/vendor/libs/perfect-scrollbar/perfect-scrollbar.js'%}"></script>
 
-    <script src="{% static 'themes/vendor/js/menu.js'%}"></script>
-    <!-- endbuild -->
 
-    <!-- Vendors JS -->
-    <script src="{% static 'themes/vendor/libs/apex-charts/apexcharts.js'%}"></script>
+  <!-- Core JS -->
+  <!-- build:js assets/vendor/js/core.js'%} -->
+  <script>
+    $(document).ready(function () {
+      var sortable = new Draggable.Sortable(document.querySelectorAll(".menu"), {
+        draggable: ".submenu",
+        handle: ".submenu_handle",
+        swapAnimation: {
+          duration: 200,
+          easingFunction: "ease-in-out",
+          vertical: true
+        },
+        plugins: [Draggable.Plugins.SwapAnimation]
+      });
+    });
 
-    <!-- Main JS -->
-    <script src="{% static 'themes/js/main.js'%}"></script>
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+  </script>
+  <script src="{% static 'themes/vendor/libs/jquery/jquery.js'%}"></script>
+  <script src="{% static 'themes/vendor/libs/popper/popper.js'%}"></script>
+  <script src="{% static 'themes/vendor/js/bootstrap.js'%}"></script>
+  <script src="{% static 'themes/vendor/libs/perfect-scrollbar/perfect-scrollbar.js'%}"></script>
 
-    <!-- Page JS -->
-    <script src="{% static 'themes/js/dashboards-analytics.js'%}"></script>
+  <script src="{% static 'themes/vendor/js/menu.js'%}"></script>
+  <!-- endbuild -->
 
-    <!-- Place this tag in your head or just before your close body tag. -->
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <script src="{%static 'js/main.js'%}"></script>
-    {% block script %}   
-    {% endblock script %}
-  </body>
+  <!-- Vendors JS -->
+  <script src="{% static 'themes/vendor/libs/apex-charts/apexcharts.js'%}"></script>
+
+  <!-- Main JS -->
+  <script src="{% static 'themes/js/main.js'%}"></script>
+
+  <!-- Page JS -->
+  <script src="{% static 'themes/js/dashboards-analytics.js'%}"></script>
+
+  <!-- Place this tag in your head or just before your close body tag. -->
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+  <script src="{%static 'js/main.js'%}"></script>
+  {% block script %}
+  {% endblock script %}
+</body>
+
 </html>
