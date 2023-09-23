@@ -66,3 +66,14 @@
 .todo {
   color: rgb(168, 168, 13) !important;
 }
+input {
+  border: 1px solid #696CFF !important;
+}
+textarea {
+  border: 1px solid #696CFF !important;
+}
+.alert-error{
+  color: red;
+  background-color:rgba(174, 29, 29, 0.341) ;
+  
+}

@@ -10,7 +10,7 @@
         </div>
         <div class="col-sm-4 mb-0 pb-0 pt-2">
             <p class="text-primary text-capitalize h5">
-                <i class='bx bx-circle bx-flashing' ></i> {{project.status}}
+              <i class='bx bx-radio-circle-marked bx-flashing'></i> {{project.status}}
             </p>
         </div>
     </div>
@@ -35,7 +35,7 @@
       <div class="card mb-4">
         <div class="card-body">
           <h5 class="card-title"><i class='bx bx-customize'></i>  Tasks</h5>
-          <div class="card-subtitle text-muted mb-3">Project Managmanet</div>
+          <div class="card-subtitle text-muted mb-3">Project Management</div>
           <p class="card-text menu">
             {% for task_data in tasks_data %}
        
@@ -47,7 +47,7 @@
                 <i class='bx bx-checkbox-square {{ task_data.task.state }}'></i> {{ task_data.task.state|title }}              
               </div>
               <div class="col-sm-4 text-end">
-                <a href="javascript:void()" onclick="deleteTask('{{task_data.task.uid }}','{{ csrf_token }}')"><i class="bx bx-trash text-danger"></i></a> &nbsp; &nbsp; &nbsp; &nbsp;
+                <a href="javascript:void()" ondblclick="deleteTask('{{task_data.task.uid }}','{{ csrf_token }}')"><i class="bx bx-trash text-danger"></i></a> &nbsp; &nbsp; &nbsp; &nbsp;
               </div>
             </div>
             {% if task_data.progress != 0 %}
@@ -71,13 +71,13 @@
                     <input type="hidden" name="project" value="{{ project.id}}">
                     <input type="hidden" value="{{task_data.task.uid}}" name="task_id">
                   <div class="mt-2 mb-3">  
-                    <label for="largeInput" class="text-black" >Title:</label>            
+                    <label for="largeInput" class="text-black" ><i class="bx bx-rename"></i> Title:</label>            
                     <input id="largeInput"  name="title" class="form-control form-control-lg border-0" type="text" value="{{ task_data.task.title}}" placeholder="Title">
                   </div>
                   <div class="row">
                     <div class="col-8">
                       <div class="task-main">  
-                        <label for="desc-task" class="text-black">Description:</label>           
+                        <label for="desc-task" class="text-black"><i class="bx bx-rename"></i> Description:</label>           
                         <div class="input-group input-group-merge ">                         
                           <textarea id="desc-task" class="form-control border-0" name="description" placeholder="Description"  rows="2">{{ task_data.task.description}}</textarea>
                           <!-- <span class="input-group-text">
@@ -98,7 +98,7 @@
                                 <input class="form-control  border-0" type="text" value="{{ checklist_item.title }}" name="titles[]" placeholder="Check List">
                               </div>
                               <div class="col-1 d-flex align-items-center justify-content-center">
-                               <a href="javascript:void(0)" onclick="deleteTaskChecklist('{{ checklist_item.uid }}','{{ csrf_token }}')"> <i class="bx bx-trash text-danger"> </i></a>
+                               <a href="javascript:void(0)" ondblclick="deleteTaskChecklist('{{ checklist_item.uid }}','{{ csrf_token }}')"> <i class="bx bx-trash text-danger"> </i></a>
                               </div>
                             </div>
                             {% endfor %}
@@ -142,29 +142,30 @@
   <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="taskModal">Add Task:</h1>
+        <h1 class="modal-title fs-5" id="taskModal"><i class="bx bx-plus-medical"></i> Add Task:</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form action="{% url 'project_task' subsidiary %}" method="post">
           {%csrf_token%}
           <input type="hidden" value="{{project.id}}" name="project">
-        <div class="mt-2 mb-3">              
-          <input id="largeInput" name="title" class="form-control form-control-lg" type="text" placeholder="Title">
+        <div class="mt-2 mb-3">  
+          <label for="addtitle" class="ps-2"><i class='bx bx-rename'></i> Title:</label>            
+          <input id="largeInput" id="addtitle" name="title" class="form-control form-control-lg" type="text" placeholder="Title">
         </div>
         <div class="row">
           <div class="col-8">
             <div class="task-main ">             
+              <label for="adddescription" class="ps-2"><i class='bx bx-rename'></i> Description:</label>
               <div class="input-group input-group-merge speech-to-text">
-                <textarea class="form-control" name="description" placeholder="Description" rows="7"></textarea>
-                <span class="input-group-text">
-                  <i class="bx bx-microphone cursor-pointer text-to-speech-toggle"></i>
-                </span>
+                <textarea class="form-control" name="description" id="adddescription" placeholder="Description" rows="7"></textarea>
+               
               </div>
 
             </div>
           </div>
-          <div class="col-4">                
+          <div class="col-4">  
+            <label for="html5-datetime-local-input"  class="ps-2"><i class="bx bx-calendar-event"></i> Final Date:</label>               <br>
             <input class="form-control"  type="datetime-local" name="end_date"  id="html5-datetime-local-input" placeholder="Last Date">
             <div class="input-group mt-3">
               <span class="input-group-text" id="basic-addon11">@</span>
@@ -217,13 +218,14 @@
         </div>  
         <div class="card mt-4">
           <div class="card-header d-flex align-items-center justify-content-between">
-            <h5 class="card-title m-0 me-2"><i class="bx bx-upload"></i> Upload </h5>
+            <h5 class="card-title m-0 me-2"><i class="bx bx-upload"></i> Uploads </h5>
           </div>
           <div class="card-body">
             <form action="{% url 'upload_attachment' subsidiary %}" method="post" enctype="multipart/form-data">
               <div class="container-file">
                   {%csrf_token%}
                 <input type="hidden" name="project_id" value="{{ project.id}}">
+                <p class="ps-2" class="text-danger"  id="file-message"></p>
                 <label for="file-file" class="footer-file">
                   <i class="bx bx-right-arrow-circle"> </i>
                   <p class="pt-3"> Select File!</p>
@@ -248,7 +250,7 @@
               <li class="d-flex mb-4 pb-1" >
                
                 <div class="avatar flex-shrink-0 me-3">
-                  <span class="avatar-initial rounded bg-label-primary" onclick="downloadFile('/media/attachments/{{attachment.attachment_file}}','{{project.slug}}-{{ attachment.attachment_file }}' )"><i class="bx bx-cloud-download"></i></span>
+                  <span class="avatar-initial rounded bg-label-primary" onclick="downloadFile('/static/attachments/{{attachment.attachment_file}}','{{project.slug}}-{{ attachment.attachment_file }}' )"><i class="bx bx-cloud-download"></i></span>
                 </div>
                 <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                   <div class="me-2">
@@ -256,7 +258,7 @@
                     <small class="text-muted">{{ attachment.attachment_file }}</small>
                   </div>
                   <div class="user-progress">
-                    <i class="bx bx-trash" onclick="deleteAttachment('{{attachment.id }}','{{ csrf_token }}')"></i>
+                    <i class="bx bx-trash text-danger cursor-pointer" ondblclick="deleteAttachment('{{attachment.id }}','{{ csrf_token }}')"></i>
                   </div>
                 </div> 
               

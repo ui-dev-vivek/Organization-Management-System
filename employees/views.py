@@ -39,9 +39,11 @@ def emp_profile(request, subsidiary):
     return render(request, "employee/profile.html", data)
 
 
+@is_employee
 def project(request, subsidiary, slug):
     employee_data = Employees.objects.get(user=request.user)
-    project = Projects.objects.get(slug=slug)
+    project = get_object_or_404(Projects, slug=slug)
+
     userproject = EmployeeOnProject.objects.filter(
         employees=employee_data, project=project
     )
@@ -81,25 +83,26 @@ def project(request, subsidiary, slug):
             "progress": progress,
         }
         tasks_data.append(task_data)
-        
+
     attachments = Attachments.objects.filter(project=project)
 
     attachment_data = []
     for attachment in attachments:
-        attachment_data.append({
-            'id': attachment.uid,
-            'file_name': attachment.file_name,
-            'attachment_file': attachment.attachment_file.url.split("/")[-1]
-        })
+        attachment_data.append(
+            {
+                "id": attachment.uid,
+                "file_name": attachment.file_name,
+                "attachment_file": attachment.attachment_file.url.split("/")[-1],
+            }
+        )
 
     data = {
         "project": project,
         "userproject": userproject,
         "members": members,
         "tasks_data": tasks_data,
-        "attachments":attachment_data
+        "attachments": attachment_data,
     }
-    
 
     return render(request, "employee/project.html", data)
 
@@ -118,6 +121,9 @@ def project_task_view(request, subsidiary):
             # Assuming assigned_to_id is the ID of the assigned user
 
             end_date = data.get("end_date")
+            if not project or not title or not description or not end_date:
+                message.error(request, "Fill all fields.")
+                return redirect(request.META.get("HTTP_REFERER"))
             # Assuming project_id is the ID of the associated project
             project = get_object_or_404(Projects, id=project)
 
@@ -201,19 +207,19 @@ def upload_attachment(request, subsidiary):
                 },
                 status=400,
             )
-
+        project = get_object_or_404(Projects, id=request.POST.get("project_id"))
         # Save the attachment to the server
-        upload_path = os.path.join(settings.MEDIA_ROOT, "attachments", attachment.name)
+        upload_path = "static/attachments/" + subsidiary + "-" +project.slug+"-"+ attachment.name
         with open(upload_path, "wb+") as destination:
             for chunk in attachment.chunks():
                 destination.write(chunk)
 
-        project = get_object_or_404(Projects, id=request.POST.get("project_id"))
+        
         attachment_instance = Attachments.objects.create(
             project=project,
             upload_by=request.user,
             file_name=request.POST.get("file_name"),  # attachment.name,
-            attachment_file=os.path.join("attachments", attachment.name),
+            attachment_file=upload_path,
         )
 
         messages.success(request, "Attachment File Uploaded!")
