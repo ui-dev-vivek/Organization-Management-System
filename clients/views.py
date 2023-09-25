@@ -4,7 +4,8 @@ from .decorators import is_client
 from subsidiaries.models import Subsidiaries
 from clients.models import Clients
 from django.http import HttpResponseBase, request, JsonResponse
-from projects.models import Projects,EmployeeOnProject,ClientOnProject
+from projects.models import Projects,EmployeeOnProject,ClientOnProject,TaskChecklist,Attachments,ProjectTask
+
 from payments.models import Invoice,PaymentHistory,Item
 from django.contrib import messages
 from PIL import Image
@@ -27,7 +28,7 @@ def client_profile(request,subsidiary):
         'user':request.user
     }
     return render(request,'client/profile.html',data)
-
+@is_client
 def project(request, subsidiary, slug):
     client_data = Clients.objects.get(user=request.user)
     project = Projects.objects.get(slug=slug)
@@ -48,11 +49,42 @@ def project(request, subsidiary, slug):
             'profile_image':employee_data.profile_image.url           
         }
         members.append(employee_with_user)
+    project_tasks = ProjectTask.objects.filter(project=project)
+    tasks_data = []
+
+    for task in project_tasks:
+        checklist_items = TaskChecklist.objects.filter(project_task=task)
+        total_checklist_count = checklist_items.count()
+        checked_count = checklist_items.filter(status=True).count()
+        if total_checklist_count != 0:
+            progress = (checked_count / total_checklist_count) * 100
+        else:
+            progress = 0
+        task_data = {
+            "task": task,
+            "checklist_items": checklist_items,
+            "checked": checked_count,
+            "taskchecklistcount": total_checklist_count,
+            "progress": progress,
+        }
+        tasks_data.append(task_data)
+        
+    attachments = Attachments.objects.filter(project=project)
+
+    attachment_data = []
+    for attachment in attachments:
+        attachment_data.append({
+            'id': attachment.uid,
+            'file_name': attachment.file_name,
+            'attachment_file': attachment.attachment_file.url.split("/")[-1]
+        })
 
     data = {
         'project': project,
         'clientproject': clientproject,
-        'members': members
+        'members': members,
+        "tasks_data": tasks_data,
+        "attachments":attachment_data
     }
 
     return render(request, 'client/project.html', data)
@@ -141,7 +173,7 @@ def upload_profile_image(request, subsidiary):
 
         img = img.resize((150, 150), Image.ANTIALIAS)
 
-        resized_image_path = os.path.join('static/profile_images/', uploaded_image.name)
+        resized_image_path = os.path.join('media/static/profile_images/', uploaded_image.name)
         img.save(resized_image_path)
 
         clients.profile_image = resized_image_path

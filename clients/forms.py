@@ -8,7 +8,7 @@ class ClientForm(forms.ModelForm):
     class Meta:
         model = Clients
         fields = '__all__'
-        
+    
     
     username = forms.CharField(label='Username',required=True)    
     email = forms.EmailField(label='Email',required=True)

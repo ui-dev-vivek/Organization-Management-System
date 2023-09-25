@@ -2,3 +2,4 @@ pip install Faker
 pip install Pillow
 pip install djangorestframework
 pip install stripe
+pip install python-decouple dj-database-url

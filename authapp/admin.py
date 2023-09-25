@@ -1,30 +1,28 @@
 from django.contrib import admin
 from authapp.models import User, Address
-
+from django.contrib.auth.admin import UserAdmin
 from django import forms
 
+class UserAdmin(UserAdmin):
+    list_display = ('username', 'email', 'is_employee', 'is_client')
+    list_filter = ('is_employee', 'is_client')
+    fieldsets = (
+        (None, {'fields': ('username', 'password')}),
+        ('Personal info', {'fields': ('first_name', 'last_name', 'email')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        ('Important dates', {'fields': ('last_login', 'date_joined')}),
+        ('Custom Fields', {'fields': ('is_employee', 'is_client')}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('username', 'email', 'password1', 'password2', 'is_active','is_employee', 'is_client')}
+        ),
+    )
+    search_fields = ('username', 'email')
+    ordering = ('username',)
 
-class UserForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = '__all__'
-        
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if self.instance.pk:
-            if self.instance.is_client:
-                self.fields['organization_name'] = forms.CharField()
-                self.fields['phone_no'] = forms.IntegerField()
-                # Aur jo bhi fields Clients me hain, woh yaha add karo
-                
-            elif self.instance.is_employee:
-                self.fields['emp_type'] = forms.ChoiceField(choices=Employees.EMP_TYPE_CHOICES)
-                self.fields['phone_no'] = forms.IntegerField()
-                # Aur jo bhi fields Employees me hain, woh yaha add karo
+# Register the User model with the admin site
+admin.site.register(User, UserAdmin)
 
-class UserAdmin(admin.ModelAdmin):
-    form = UserForm
-
-admin.site.register(User,UserAdmin)
-# 
 

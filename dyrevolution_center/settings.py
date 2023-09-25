@@ -1,18 +1,17 @@
 from pathlib import Path
-from dotenv import dotenv_values
 import os
+from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-ENV = dotenv_values(".env")
 TEMPLATE_DIR=os.path.join(BASE_DIR,'templates')
 STATICFILES_DIRS = [
        os.path.join(BASE_DIR, 'static')
    ]
 
-SECRET_KEY = ENV.get("SECRET_KEY")
+SECRET_KEY = config('SECRET_KEY')
 
 
-DEBUG = True
+DEBUG = config('APP_DEBUG')
 
 ALLOWED_HOSTS = []
 
@@ -73,11 +72,11 @@ WSGI_APPLICATION = "dyrevolution_center.wsgi.application"
 DATABASES = {
     # 'default': {
     #        'ENGINE': 'django.db.backends.mysql',
-    #        'NAME': ENV.get('DB_DATABASE'),
-    #        'USER': ENV.get('DB_USERNAME'),
-    #        'PASSWORD':ENV.get('DB_PASSWORD'),
-    #        'HOST': ENV.get('DB_HOST'),
-    #        'PORT': ENV.get('DB_PORT'),
+    #        'NAME': config('DB_DATABASE'),
+    #        'USER': config('DB_USERNAME'),
+    #        'PASSWORD':config('DB_PASSWORD'),
+    #        'HOST': config('DB_HOST'),
+    #        'PORT': config('DB_PORT'),
     #    }
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -129,5 +128,17 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# MEDIA_URL = '//'
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+
+# Email Configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT', cast=int)
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+
+# ...other settings...
