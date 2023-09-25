@@ -171,7 +171,7 @@ def update_project_task(request, subsidiary):
                         project_task=projecttask, title=titles[i], status=False
                     )
                 else:
-                    pass
+                    messages.error(request, "Empty Checklists are removed!")
 
         messages.success(request, "Task and checklist updated successfully.")
     except Exception as e:
