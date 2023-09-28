@@ -42,7 +42,12 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['email', 'username', 'first_name', 'last_name']
-
+        
+class UserRegSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'
+        
 class AddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = Address
@@ -88,19 +93,26 @@ class InvoiceSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+# class InvoiceSerializer(serializers.ModelSerializer):
+#     items = ItemSerializer(many=True)
+#     address = AddressSerializer()
 
+    class Meta:
+        model = Invoice
+        fields = '__all__'
     
 class PaymentHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentHistory
         fields = '__all__'
    
+   
 class ClientRegSerializer(serializers.ModelSerializer):
     class Meta:
         model = Clients
         fields = '__all__'
 
-class EmployeesSerializer(serializers.ModelSerializer):
+class EmployeeRegSerializer(serializers.ModelSerializer):
     class Meta:
         model = Employees
         fields = '__all__'
