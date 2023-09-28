@@ -1,8 +1,9 @@
 from rest_framework.generics import ListAPIView,RetrieveAPIView
 from rest_framework.views import APIView
-# from rest_framework.generics import RetrieveAPIView
 from rest_framework import generics,permissions
 from employees.models import Employees
+from clients.models import Clients
+from authapp.models import User,Address
 from .serializers import *
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -12,11 +13,11 @@ from subsidiaries.models import Organizations,Subsidiaries,Budgets
 from django.http import JsonResponse,Http404
 from rest_framework.decorators import permission_classes
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,IsAdminUser
 from django.shortcuts import get_object_or_404
 
 # For Login
-@api_view(['POST'])
+@api_view(['POST']) 
 def login_api(request):
     username = request.data.get('username')
     password = request.data.get('password')
@@ -63,6 +64,7 @@ class OrganizationListView(ListAPIView):
     serializer_class = OrganizationSerializer
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
 
     def get_queryset(self):
         organizations = super().get_queryset()
@@ -136,6 +138,7 @@ class ProjectDetailsWithEmployeeAndClientView(generics.RetrieveAPIView):
     queryset = Projects.objects.all()
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
 
 
     def retrieve(self, request, *args, **kwargs):
@@ -200,6 +203,9 @@ class ProjectDetailsWithEmployeeAndClientView(generics.RetrieveAPIView):
         
         
 class InvoiceListCreateView(generics.ListCreateAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
     def get(self, request, format=None):
         # Get the invoice number from the query parameters
         invoice_number = self.request.query_params.get('invoice_number')
@@ -225,36 +231,181 @@ class PaymentHistoryAPIView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     
     
-    
-    
-class ClientRegistrationAPIView(APIView):
+class ClientRegistration(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
-    def post(self, request):
-        form = ClientForm(request.POST)
-        if form.is_valid():
-            # Create a new User
-            user = User.objects.create_user(
-                username=form.cleaned_data['username'],
-                email=form.cleaned_data['email'],
-                password=form.cleaned_data['password'],
-                first_name=form.cleaned_data['first_name'],
-                last_name=form.cleaned_data['last_name']
-            )
+    # permission_classes = [IsAdminUser]
+    def post(self, request, format=None):
+        return self.create_or_update(request, create=True)
 
-            # Create a new Client
-            client = Clients.objects.create(
-                user=user,
-                organization_name=form.cleaned_data['organization_name'],
-                phone_no=form.cleaned_data['phone_no'],
-                street_address=form.cleaned_data['street_address'],
-                apt_suite_number=form.cleaned_data['apt_suite_number'],
-                city=form.cleaned_data['city'],
-                state=form.cleaned_data['state'],
-                zip_code=form.cleaned_data['zip_code'],
-                country=form.cleaned_data['country']
-            )
+    def put(self, request, format=None):
+        return self.create_or_update(request, create=False)
 
-            return Response({'message': 'Client registered successfully.'}, status=status.HTTP_201_CREATED)
+    def create_or_update(self, request, create=True):
+        # Extract username from the request
+        username = request.data.get('user', {}).get('username', '')
+
+        try:
+            user_instance = User.objects.get(username=username)
+        except User.DoesNotExist:
+            user_instance = None
+
+        # Create a new user if it doesn't exist
+        if create or user_instance is None:
+            user_serializer = UserSerializer(data=request.data.get('user', {}))
         else:
-            return Response({'errors': form.errors}, status=status.HTTP_400_BAD_REQUEST)
+            # Update user data, keeping existing data for fields not provided in the request
+            user_serializer = UserSerializer(user_instance, data=request.data.get('user', {}), partial=True)
+
+        if user_serializer.is_valid():
+            user_instance = user_serializer.save()
+        else:
+            return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # Update Client data if it exists
+        client_data = request.data.get('client', {})
+        client_data['user'] = user_instance.id
+
+        try:
+            client_instance = Clients.objects.get(user=user_instance)
+            client_serializer = ClientRegSerializer(client_instance, data=client_data, partial=True)
+        except Clients.DoesNotExist:
+            client_instance = None
+            client_serializer = ClientRegSerializer(data=client_data)
+
+        if client_serializer.is_valid():
+            client_instance = client_serializer.save()
+        else:
+            return Response(client_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # Update Address data if it exists
+        address_data = request.data.get('address', {})
+        address_data['user'] = user_instance.id
+
+        try:
+            address_instance = Address.objects.get(user=user_instance)
+            address_serializer = AddressSerializer(address_instance, data=address_data, partial=True)
+        except Address.DoesNotExist:
+            address_instance = None
+            address_serializer = AddressSerializer(data=address_data)
+
+        if address_serializer.is_valid():
+            address_instance = address_serializer.save()
+        else:
+            return Response(address_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        if create:
+            return Response({"message": "Client registered successfully"}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"message": "Client information updated successfully"}, status=status.HTTP_200_OK)
+    
+            
+class EmployeeRegistration(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAdminUser]
+    def post(self, request, format=None):
+        return self.create_or_update(request, create=True)
+
+    def put(self, request, format=None):
+        return self.create_or_update(request, create=False)
+
+    def create_or_update(self, request, create=True):
+        if True:#'user' in request.data and 'employee' in request.data and 'address' in request.data:
+            user_data = request.data.get('user')
+            username = user_data.get('username', '')
+            is_employee = user_data.get('is_employee', True)
+
+            # Check if the user is an employee (is_employee is True)
+            # if not is_employee:
+            #     return Response({"message": "Not an Employee."}, status=status.HTTP_400_BAD_REQUEST)
+
+            try:
+                user_instance = User.objects.get(username=username)
+                print(user_instance.is_employee)
+            except User.DoesNotExist:
+                user_instance = None
+
+            if create or user_instance is None:
+                user_serializer = UserSerializer(data=user_data)
+            else:
+                # Remove 'username' from data if it's a PUT request
+                user_data.pop('username', None)
+                user_serializer = UserSerializer(user_instance, data=user_data, partial=True)
+
+            if user_serializer.is_valid():
+                user_instance = user_serializer.save()
+            else:
+                return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            employee_data = request.data.get('employee')
+            employee_data['user'] = user_instance.id
+
+            try:
+                employee_instance = Employees.objects.get(user=user_instance)
+                employee_serializer = EmployeesSerializer(employee_instance, data=employee_data, partial=True)
+            except Employees.DoesNotExist:
+                employee_instance = None
+                employee_serializer = EmployeesSerializer(data=employee_data)
+
+            if employee_serializer.is_valid():
+                employee_instance = employee_serializer.save()
+            else:
+                return Response(employee_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            address_data = request.data.get('address')
+            address_data['user'] = user_instance.id
+
+            try:
+                address_instance = Address.objects.get(user=user_instance)
+                address_serializer = AddressSerializer(address_instance, data=address_data, partial=True)
+            except Address.DoesNotExist:
+                address_instance = None
+                address_serializer = AddressSerializer(data=address_data)
+
+            if address_serializer.is_valid():
+                address_instance = address_serializer.save()
+            else:
+                return Response(address_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            if create:
+                return Response({"message": "Employee registered successfully"}, status=status.HTTP_201_CREATED)
+            else:
+                return Response({"message": "Employee information updated successfully"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "Required keys missing in JSON payload"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    # def post(self, request, format=None):
+#         # Ensure the 'user', 'employee', and 'address' keys are present in the JSON payload
+#         if 'user' in request.data and 'employee' in request.data and 'address' in request.data:
+#             user_data = request.data.get('user')
+#             user_serializer = UserSerializer(data=user_data)
+            
+#             if user_serializer.is_valid():
+#                 user_instance = user_serializer.save()
+                
+#                 employee_data = request.data.get('employee')
+#                 employee_data['user'] = user_instance.id
+#                 employee_serializer = EmployeesSerializer(data=employee_data)
+                
+#                 if employee_serializer.is_valid():
+#                     employee_instance = employee_serializer.save()
+                    
+#                     address_data = request.data.get('address')
+#                     address_data['user'] = user_instance.id
+#                     address_serializer = AddressSerializer(data=address_data)
+                    
+#                     if address_serializer.is_valid():
+#                         address_serializer.save()
+                        
+#                         return Response({"message": "Employee registered successfully"}, status=status.HTTP_201_CREATED)
+#                     else:
+#                         user_instance.delete()
+#                         employee_instance.delete()
+#                         return Response(address_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#                 else:
+#                     user_instance.delete()
+#                     return Response(employee_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#             return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#         else:
+#             return Response({"error": "Required keys missing in JSON payload"}, status=status.HTTP_400_BAD_REQUEST)

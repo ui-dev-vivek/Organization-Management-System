@@ -12,8 +12,6 @@ class BudgetSerializer(serializers.ModelSerializer):
         model = Budgets
         fields = '__all__'
 
-
-
 class SubsidiarySerializer(serializers.ModelSerializer):
     budgets = BudgetSerializer(many=True, read_only=True)
 
@@ -95,4 +93,14 @@ class InvoiceSerializer(serializers.ModelSerializer):
 class PaymentHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentHistory
+        fields = '__all__'
+   
+class ClientRegSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Clients
+        fields = '__all__'
+
+class EmployeesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Employees
         fields = '__all__'
