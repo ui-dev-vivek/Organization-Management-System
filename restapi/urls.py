@@ -17,9 +17,11 @@ urlpatterns = [
     path('subsidiaries-projects-budgets/',SubsidiariesDetailsView.as_view(), name='subsidiaries-projects-budgets-list'),
     path('projects-details/',ProjectDetailsWithEmployeeAndClientView.as_view(), name='projects-details'), 
     # path('invoices/', InvoiceListCreateView.as_view(), name='invoice-list-create'),  
-    path('invoices/<str:invoice_number>/', InvoiceAPIView.as_view(), name='invoice-detail'),
-    path('invoices/', InvoiceAPIView.as_view(), name='invoice-list'),
+    # path('invoices/<str:invoice_number>/', InvoiceAPIView.as_view(), name='invoice-detail'),
+    # path('invoices/', InvoiceAPIView.as_view(), name='invoice-list'),
     path('payment-history/', PaymentHistoryAPIView.as_view(), name='payment-history'),
+    path('invoices/<str:invoice_number>/', InvoiceDetailView.as_view(), name='invoice-detail'),
+    path('invoices/', InvoiceListCreateView.as_view(), name='invoice-list'),
 
 ] 
 
