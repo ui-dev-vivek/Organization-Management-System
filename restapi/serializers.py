@@ -83,23 +83,9 @@ class ItemSerializer(serializers.ModelSerializer):
         model = Item
         fields = '__all__'
 
-class InvoiceSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
-    address = AddressSerializer(source='user.address', read_only=True)
-    items = ItemSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Invoice
-        fields = '__all__'
 
 
-# class InvoiceSerializer(serializers.ModelSerializer):
-#     items = ItemSerializer(many=True)
-#     address = AddressSerializer()
 
-    class Meta:
-        model = Invoice
-        fields = '__all__'
     
 class PaymentHistorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -116,3 +102,63 @@ class EmployeeRegSerializer(serializers.ModelSerializer):
     class Meta:
         model = Employees
         fields = '__all__'
+        
+
+class AddressSerializer(serializers.ModelSerializer):
+    address = UserSerializer()
+    class Meta:
+        model = Address
+        fields = "__all__"
+
+class InvoiceGetSerializer(serializers.ModelSerializer):
+    user = AddressSerializer()
+    items = serializers.SerializerMethodField()
+    # addresses = AddressSerializer(many=True)  # Include related addresses
+    payment_histories = PaymentHistorySerializer(many=True)  # Include related payment histories
+
+    class Meta:
+        model = Invoice
+        fields = '__all__'
+    def get_user(self, obj):
+        # Assuming you have a 'User' ForeignKey field in the 'Invoice' model
+        user = obj.user
+        # You can customize this method to return user details as needed
+        return {
+            'username': user.username,
+            'email': user.email,
+            # Add other user fields as needed
+        }
+
+    def get_items(self, obj):
+        items = Item.objects.filter(invoice=obj)
+        item_serializer = ItemSerializer(items, many=True)
+        return item_serializer.data
+
+class InvoiceSerializer(serializers.ModelSerializer):
+    items = ItemSerializer(many=True, required=False)  # Make items not required during update
+    
+    class Meta:
+        model = Invoice
+        fields = '__all__'
+
+    
+
+    def update(self, instance, validated_data):
+        # Update invoice fields
+        instance.user = validated_data.get('user', instance.user)
+        instance.invoice_number = validated_data.get('invoice_number', instance.invoice_number)
+        instance.amount = validated_data.get('amount', instance.amount)
+        instance.is_paid = validated_data.get('is_paid', instance.is_paid)
+        instance.due_date = validated_data.get('due_date', instance.due_date)
+        instance.payment_method = validated_data.get('payment_method', instance.payment_method)
+        instance.tax_rate = validated_data.get('tax_rate', instance.tax_rate)
+
+        # Update items if provided in the payload
+        items_data = validated_data.get('items')
+        if items_data is not None:
+            instance.items.all().delete()  # Clear existing items
+            for item_data in items_data:
+                Item.objects.create(invoice=instance, **item_data)
+
+        instance.save()
+        return instance

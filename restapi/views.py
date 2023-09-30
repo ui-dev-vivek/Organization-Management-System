@@ -224,34 +224,65 @@ class InvoiceListCreateView(generics.ListCreateAPIView):
 
         return Response(serializer.data)
     
-class InvoiceAPIView(APIView):
-    def get(self, request, invoice_number):
-        try:
-            invoice = Invoice.objects.get(invoice_number=invoice_number)
-        except Invoice.DoesNotExist:
-            return Response({"message": "Invoice not found"}, status=status.HTTP_404_NOT_FOUND)
+class InvoiceDetailView(APIView):
+    def get(self, request, invoice_number, format=None):
+        invoice = get_object_or_404(Invoice, invoice_number=invoice_number)
+        serializer = InvoiceGetSerializer(invoice)
+        
+        response_data = serializer.data  # This will include related addresses and payment histories
+        
+        return Response(response_data)
+        response_data = {
+            'user': user_data,
+            'items': items_data,
+            'address': address_data,
+            'payments': payment_data
+        }
 
-        serializer = InvoiceSerializer(invoice)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def post(self, request):
-        serializer = InvoiceSerializer(data=request.data)
+        return Response(response_data)
+    
+class InvoiceListCreateView(APIView):
+    def put(self, request, format=None):        
+        invoice_number = request.data.get('invoice_number', '')
+        invoice = get_object_or_404(Invoice, invoice_number=invoice_number)
+        serializer = InvoiceSerializer(invoice, data=request.data, partial=True)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            serializer.save()            
+            response_data = {
+                    'uid': invoice.uid,
+                    'invoice_number': invoice.invoice_number,
+                    'message': 'Invoice Update successfully.'
+                }
+
+            return Response(response_data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def put(self, request, invoice_number):
+    
+    def post(self, request, format=None):
         try:
-            invoice = Invoice.objects.get(invoice_number=invoice_number)
-        except Invoice.DoesNotExist:
-            return Response({"message": "Invoice not found"}, status=status.HTTP_404_NOT_FOUND)
+            data = request.data
+            items_data = data.pop('items', [])  
+            serializer = InvoiceSerializer(data=data)
+            if serializer.is_valid():
+                invoice = serializer.save()               
+                for item_data in items_data:
+                    Item.objects.create(invoice=invoice, **item_data)
+                response_data = {
+                    'uid': invoice.uid,
+                    'invoice_number': invoice.invoice_number,
+                    'message': 'Invoice created successfully.'
+                }
 
-        serializer = InvoiceSerializer(invoice, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
+                return Response(response_data, status=status.HTTP_201_CREATED)
+
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            response_data = {
+                'message': f'An error occurred: {str(e)}'
+            }
+            return Response(response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+      
 class PaymentHistoryAPIView(generics.ListCreateAPIView):
     queryset = PaymentHistory.objects.all()
     serializer_class = PaymentHistorySerializer
