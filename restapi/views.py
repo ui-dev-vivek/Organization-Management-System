@@ -229,7 +229,7 @@ class InvoiceDetailView(APIView):
         invoice = get_object_or_404(Invoice, invoice_number=invoice_number)
         serializer = InvoiceGetSerializer(invoice)
         
-        response_data = serializer.data  # This will include related addresses and payment histories
+        response_data = serializer.data  
         
         return Response(response_data)
         response_data = {
