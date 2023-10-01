@@ -225,12 +225,10 @@ class InvoiceListCreateView(generics.ListCreateAPIView):
         return Response(serializer.data)
     
 class InvoiceDetailView(APIView):
-    def get(self, request, invoice_number, format=None):
+   def get(self, request, invoice_number, format=None):
         invoice = get_object_or_404(Invoice, invoice_number=invoice_number)
         serializer = InvoiceGetSerializer(invoice)
-        
-        response_data = serializer.data  
-        
+        response_data = serializer.data
         return Response(response_data)
         response_data = {
             'user': user_data,

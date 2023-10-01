@@ -35,9 +35,9 @@ urlpatterns = [
 # Employee Update :POST  : Done
 # Get Employee By Username. :Done
 # ------------------------------------------------
-# Create Invoives 
-# Update Invoices
-# Get Invoices by invice_number
+# Create Invoives     :Done
+# Update Invoices      :Done
+# Get Invoices by invice_number :
 # ---------------------------------------------
 # payment History Create
 # payment Update
