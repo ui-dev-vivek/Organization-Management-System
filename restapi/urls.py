@@ -15,30 +15,9 @@ urlpatterns = [
     path('subsidiaries/<slug:slug>/',SubsidiariesDetailView.as_view(), name='subsidiaries-detail'),
     path('subsidiaries-projects/',SubsidiariesProjectsListView.as_view(), name='subsidiaries-projects-list'),
     path('subsidiaries-projects-budgets/',SubsidiariesDetailsView.as_view(), name='subsidiaries-projects-budgets-list'),
-    path('projects-details/',ProjectDetailsWithEmployeeAndClientView.as_view(), name='projects-details'), 
-    path('payment-history/', PaymentHistoryAPIView.as_view(), name='payment-history'),
+    path('projects-details/',ProjectDetailsWithEmployeeAndClientView.as_view(), name='projects-details'),    
     path('invoices/<str:invoice_number>/', InvoiceDetailView.as_view(), name='invoice-detail'),
     path('invoices/', InvoiceListCreateView.as_view(), name='invoice-list'),
-
+    path('payments/<str:transaction_id>/', PaymentDetailView.as_view(), name='payment-detailPaymentDetailView'),
+    path('payments/', PaymentListCreateView.as_view(), name='payment-list'),
 ] 
-
-
-
-
-# Login : POST for Login  : DONE
-# -------------------------------------------
-# Client Registration:   POST    :Done
-# Client Update By UserNAme :Done
-# Get Client By UserName    :Done
-# ----------------------------------------
-# Employee Registration:  POST  :Done
-# Employee Update :POST  : Done
-# Get Employee By Username. :Done
-# ------------------------------------------------
-# Create Invoives     :Done
-# Update Invoices      :Done
-# Get Invoices by invice_number :
-# ---------------------------------------------
-# payment History Create
-# payment Update
-# get Payment by trx_id, or invoices _id

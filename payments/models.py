@@ -33,17 +33,15 @@ class Item(models.Model):
     quantity = models.PositiveIntegerField(default=1)
 
     def __str__(self):
-        return self.name
-
-    
+        return self.name        
 
 class PaymentHistory(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='payment_histories')
-    invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, related_name='payments', default=None)
+    invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, related_name='payments', default=None )
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_date = models.DateTimeField(auto_now_add=True)
     payment_method = models.CharField(max_length=50)
-    transaction_id = models.CharField(max_length=100)
+    transaction_id = models.CharField(max_length=100 ,unique=True)
     notes = models.TextField(blank=True, null=True)
     payment_status = models.CharField(max_length=20, choices=[('success', 'Success'), ('pending', 'Pending'), ('failed', 'Failed')])
 

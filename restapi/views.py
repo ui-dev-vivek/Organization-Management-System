@@ -201,44 +201,25 @@ class ProjectDetailsWithEmployeeAndClientView(generics.RetrieveAPIView):
         else:
             return Response({"error": "parameter is missing"})
         
-        
-class InvoiceListCreateView(generics.ListCreateAPIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
-    # permission_classes = [IsAdminUser]
-    def get(self, request, format=None):
-        # Get the invoice number from the query parameters
-        invoice_number = self.request.query_params.get('invoice_number')
-
-        try:
-            # Retrieve the invoice by invoice_number
-            invoice = Invoice.objects.get(invoice_number=invoice_number)
-        except Invoice.DoesNotExist:
-            return Response(
-                {"detail": "Invoice not found"},
-                status=status.HTTP_404_NOT_FOUND
-            )
-
-        # Serialize the invoice, including related user and items
-        serializer = InvoiceSerializer(invoice)
-
-        return Response(serializer.data)
     
 class InvoiceDetailView(APIView):
    def get(self, request, invoice_number, format=None):
         invoice = get_object_or_404(Invoice, invoice_number=invoice_number)
-        serializer = InvoiceGetSerializer(invoice)
-        response_data = serializer.data
-        return Response(response_data)
+        invoices_inst = InvoiceGetSerializer(invoice)
+        user_serializer = UserSerializer(invoice.user) 
+        payment_history = PaymentHistory.objects.filter(invoice=invoice)
+        if payment_history.exists():
+            payment_serializer = PaymentHistorySerializer(payment_history, many=True)
+        else:
+            payment_serializer = []
         response_data = {
-            'user': user_data,
-            'items': items_data,
-            'address': address_data,
-            'payments': payment_data
+            'user': user_serializer.data,
+            'invoices': invoices_inst.data if invoices_inst else None,
+            'payments': payment_serializer.data if payment_serializer else None
         }
-
         return Response(response_data)
-    
+
+
 class InvoiceListCreateView(APIView):
     def put(self, request, format=None):        
         invoice_number = request.data.get('invoice_number', '')
@@ -269,7 +250,6 @@ class InvoiceListCreateView(APIView):
                     'invoice_number': invoice.invoice_number,
                     'message': 'Invoice created successfully.'
                 }
-
                 return Response(response_data, status=status.HTTP_201_CREATED)
 
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -281,12 +261,57 @@ class InvoiceListCreateView(APIView):
             return Response(response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
       
-class PaymentHistoryAPIView(generics.ListCreateAPIView):
-    queryset = PaymentHistory.objects.all()
-    serializer_class = PaymentHistorySerializer
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
-    
+class PaymentDetailView(APIView):
+    def get(self, request, transaction_id, format=None):
+        try:
+            payment = get_object_or_404(PaymentHistory, transaction_id=transaction_id)
+            payment_serializer = PaymentHistorySerializer(payment)
+            user_serializer = UserSerializer(payment.user)
+            try:
+                invoice = payment.invoice
+                invoice_serializer = InvoiceSerializer(invoice)
+            except Invoice.DoesNotExist:
+                invoice_serializer = None
+
+            response_data = {
+                'user': user_serializer.data if user_serializer else None,
+                'invoice': invoice_serializer.data if invoice_serializer else None,
+                'payment': payment_serializer.data if payment_serializer else None
+            }
+            return Response(response_data)
+        except PaymentHistory.DoesNotExist:
+            return Response({'error': 'PaymentHistory not found'}, status=status.HTTP_404_NOT_FOUND)
+
+class PaymentListCreateView(APIView):
+    def put(self, request, format=None):
+        transaction_id=request.data.get('transaction_id');
+        try:           
+            payment = get_object_or_404(PaymentHistory, transaction_id=transaction_id)
+            serializer = PaymentHistorySerializer(payment, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                response_data = {
+                    'uid': payment.uid,
+                    'transaction_id': payment.transaction_id,
+                    'message': 'Payment Update successfully.'
+                }
+                return Response(response_data, status=status.HTTP_201_CREATED)                
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except PaymentHistory.DoesNotExist:
+            return Response({'error': 'PaymentHistory not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    def post(self, request, format=None):
+        serializer = PaymentHistorySerializer(data=request.data)
+
+        if serializer.is_valid():
+            payment = serializer.save()  # Save the new PaymentHistory object
+            response_data = {
+                'uid': payment.uid,  # Assuming PaymentHistory has a UID field
+                'transaction_id': payment.transaction_id,  # Assuming PaymentHistory has a transaction_id field
+                'message': 'Payment created successfully.'
+            }
+            return Response(response_data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class ClientRegistration(APIView):
     authentication_classes = [TokenAuthentication]
@@ -341,16 +366,14 @@ class ClientRegistration(APIView):
         # Create a new user if it doesn't exist
         if create or user_instance is None:
             user_serializer = UserRegSerializer(data=request.data.get('user', {}))
-        else:
-            # Update user data, keeping existing data for fields not provided in the request
+        else:          
             user_serializer = UserRegSerializer(user_instance, data=request.data.get('user', {}), partial=True)
 
         if user_serializer.is_valid():
             user_instance = user_serializer.save()
         else:
             return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        # Update Client data if it exists
+      
         client_data = request.data.get('client', {})
         client_data['user'] = user_instance.id
 
@@ -437,12 +460,10 @@ class EmployeeRegistration(APIView):
             user_instance = User.objects.get(username=username)
         except User.DoesNotExist:
             user_instance = None
-
-        # Create a new user if it doesn't exist
+        
         if create or user_instance is None:
             user_serializer = UserRegSerializer(data=request.data.get('user', {}))
-        else:
-            # Update user data, keeping existing data for fields not provided in the request
+        else:            
             user_serializer = UserRegSerializer(user_instance, data=request.data.get('user', {}), partial=True)
 
         if user_serializer.is_valid():

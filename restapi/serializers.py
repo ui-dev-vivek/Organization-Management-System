@@ -104,35 +104,20 @@ class EmployeeRegSerializer(serializers.ModelSerializer):
         fields = '__all__'
         
 
-class AddressSerializer(serializers.ModelSerializer):
-    address = UserSerializer()
-    class Meta:
-        model = Address
-        fields = "__all__"
+# class AddressSerializer(serializers.ModelSerializer):
+#     address = UserSerializer()
+#     class Meta:
+#         model = Address
+#         fields = "__all__"
 
 class InvoiceGetSerializer(serializers.ModelSerializer):
-    user = AddressSerializer()
-    items = serializers.SerializerMethodField()
-    # addresses = AddressSerializer(many=True)  # Include related addresses
-    payment_histories = PaymentHistorySerializer(many=True)  # Include related payment histories
-
+    items = ItemSerializer(many=True, required=False)  
     class Meta:
         model = Invoice
         fields = '__all__'
-    def get_user(self, obj):
-        # Assuming you have a 'User' ForeignKey field in the 'Invoice' model
-        user = obj.user
-        # You can customize this method to return user details as needed
-        return {
-            'username': user.username,
-            'email': user.email,
-            # Add other user fields as needed
-        }
+    
 
-    def get_items(self, obj):
-        items = Item.objects.filter(invoice=obj)
-        item_serializer = ItemSerializer(items, many=True)
-        return item_serializer.data
+   
 
 class InvoiceSerializer(serializers.ModelSerializer):
     items = ItemSerializer(many=True, required=False)  # Make items not required during update
