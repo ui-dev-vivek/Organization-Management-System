@@ -20,4 +20,10 @@ class Address(models.Model):
 
     def __str__(self):
         return f'{self.street_address}, {self.city}, {self.state} {self.zip_code}'
-   
+    
+class ApiAdminAction(models.Model):
+    user= models.ForeignKey(User,on_delete=models.CASCADE ,related_name='api_admin_action')
+    action=models.BooleanField();
+    def __str__(self):
+        return f"{self.user.username}"
+    
