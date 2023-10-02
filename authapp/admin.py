@@ -1,5 +1,5 @@
 from django.contrib import admin
-from authapp.models import User, Address
+from authapp.models import User, Address,ApiAdminAction
 from django.contrib.auth.admin import UserAdmin
 from django import forms
 
@@ -24,5 +24,4 @@ class UserAdmin(UserAdmin):
 
 # Register the User model with the admin site
 admin.site.register(User, UserAdmin)
-
-
+admin.site.register(ApiAdminAction);
