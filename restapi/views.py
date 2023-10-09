@@ -192,15 +192,25 @@ class ProjectCreateView(APIView):
         serializer = ProjectsSerializer(project, data=request.data)
 
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            inst=serializer.save()
+            response_data = {
+                    'uid': inst.id,
+                    'slug': inst.slug,
+                    'message': 'Project Updated successfully.'
+                }
+            return Response(response_data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request, format=None):
         serializer = ProjectsSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            inst=serializer.save()
+            response_data = {
+                    'uid': inst.id,
+                    'slug': inst.slug,
+                    'message': 'Project created successfully.'
+                }
+            return Response(response_data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)            
     
 class InvoiceDetailView(APIView):

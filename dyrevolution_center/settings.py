@@ -4,6 +4,7 @@ from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATE_DIR=os.path.join(BASE_DIR,'templates')
+
 STATICFILES_DIRS = [
        os.path.join(BASE_DIR, 'static')
    ]
@@ -128,9 +129,10 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# MEDIA_URL = '//'
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # Email Configuration

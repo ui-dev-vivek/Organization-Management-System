@@ -1,6 +1,4 @@
-Faker
 Pillow
 djangorestframework
 python-decouple
 dj-database-url
-kolo
