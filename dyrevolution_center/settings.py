@@ -11,7 +11,6 @@ STATICFILES_DIRS = [
 
 SECRET_KEY = config('SECRET_KEY')
 
-
 DEBUG = config('APP_DEBUG')
 
 ALLOWED_HOSTS = []
@@ -86,8 +85,6 @@ DATABASES = {
 }
 
 
-# Password validation
-# https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -107,8 +104,6 @@ AUTH_PASSWORD_VALIDATORS = [
 AUTH_USER_MODEL = 'authapp.User'
 
 
-# Internationalization
-# https://docs.djangoproject.com/en/4.2/topics/i18n/
 
 LANGUAGE_CODE = "en-us"
 
@@ -119,13 +114,9 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = "static/"
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -142,4 +133,4 @@ EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
-# ...other settings...
+
