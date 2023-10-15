@@ -6,7 +6,7 @@ class Organizations(BaseModel):
     name = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
     description=models.TextField()
-    logo = models.ImageField(upload_to='static/logos/', null=True,
+    logo = models.ImageField(upload_to='logos/', null=True,
                                       validators=[
             FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])
             
@@ -20,7 +20,7 @@ class Subsidiaries(BaseModel):
     name = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
     description=models.TextField()
-    logo = models.ImageField(upload_to='static/logos/', null=True,
+    logo = models.ImageField(upload_to='logos/', null=True,
                                       validators=[
             FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])
             

@@ -90,7 +90,7 @@
                           <div id="allChecklist{{ task_data.task.uid }}" class="">
                             {% for checklist_item in task_data.checklist_items %}
                             <input type="hidden" name="checklist_id[]" value="{{ checklist_item.uid }}">
-                            <div class="row" id="checklist-{{checklist_id}}">
+                            <div class="row" id="checklist-{{checklist_item.uid}}">
                               <div class="col-1 text-end d-flex align-items-center justify-content-center">
                                 <input class="form-check-input" value="{{ checklist_item.uid }}"  type="checkbox" name="status[]" {% if checklist_item.status %}Checked {% else %}Unchecked {% endif %}>
                               </div>

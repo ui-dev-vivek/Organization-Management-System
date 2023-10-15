@@ -9,7 +9,7 @@ class Clients(BaseModel):
     subsidiary = models.ForeignKey(Subsidiaries, on_delete=models.CASCADE)
     phone_no = models.IntegerField(unique=False)
     organization_name = models.CharField(max_length=255) 
-    profile_image = models.ImageField(upload_to='static/profile_images/', null=True,default='static/profile_images/default.png',
+    profile_image = models.ImageField(upload_to='profile_images/', null=True,default='static/profile_images/default.png',
                                       validators=[
             FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])
             

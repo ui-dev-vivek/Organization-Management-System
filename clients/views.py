@@ -1,5 +1,6 @@
 from django.shortcuts import HttpResponse, render
 import os
+from django.conf import settings
 from .decorators import is_client
 from subsidiaries.models import Subsidiaries
 from clients.models import Clients
@@ -154,32 +155,43 @@ def invoices(request, subsidiary):
 # XHttp Methods.
 @is_client
 def upload_profile_image(request, subsidiary):
-    if request.method == 'POST' and request.FILES.get('profile_image'):
-        user = request.user 
+    if request.method == "POST" and request.FILES.get("profile_image"):
+        user = request.user
         try:
-            clients = Clients.objects.get(user=user)
+            client = Clients.objects.get(user=user)
         except ObjectDoesNotExist:
-            return JsonResponse({'error': 'Employee record not found for the user.'}, status=400)
+            return JsonResponse(
+                {"error": "Client record not found for the user."}, status=400
+            )
 
-     
-        if clients.profile_image:
-            old_image_path = clients.profile_image.path
+       
+        if client.profile_image:
+            old_image_path = os.path.join(settings.MEDIA_ROOT, str(client.profile_image.url))
             if os.path.exists(old_image_path):
                 os.remove(old_image_path)
 
-        uploaded_image = request.FILES['profile_image']
+        uploaded_image = request.FILES["profile_image"]
 
+        
         img = Image.open(uploaded_image)
-
         img = img.resize((150, 150), Image.ANTIALIAS)
 
-        resized_image_path = os.path.join('media/static/profile_images/', uploaded_image.name)
-        img.save(resized_image_path)
+       
+        resized_image_path = os.path.join("profile_images", uploaded_image.name)
 
-        clients.profile_image = resized_image_path
-        clients.save()        
-        image_url = clients.profile_image.url
-        return JsonResponse({'image_url': image_url})
+       
+        resized_image_full_path = os.path.join(settings.MEDIA_ROOT, resized_image_path)
+        img.save(resized_image_full_path)
+
+        client.profile_image = resized_image_path
+        client.save()
+
+        
+        image_url = os.path.join(settings.MEDIA_URL, resized_image_path)
+        return JsonResponse({"image_url": image_url})
     else:
-        return JsonResponse({'error': 'Image not provided or invalid request.'}, status=400)
+        return JsonResponse(
+            {"error": "Image not provided or invalid request."}, status=400
+        )
+
 #code Close!

@@ -111,14 +111,14 @@ def project(request, subsidiary, slug):
 def project_task_view(request, subsidiary):
     if request.method == "POST":
         try:
-            data = request.POST  # Assuming data is sent via POST form data
+            data = request.POST  
 
-            # Assuming data includes project_id, title, description, and assigned_to_id
+          
             project = data.get("project")
             title = data.get("title")
             description = data.get("description")
 
-            # Assuming assigned_to_id is the ID of the assigned user
+           
 
             end_date = data.get("end_date")
             if not project or not title or not description or not end_date:
@@ -199,21 +199,15 @@ def upload_attachment(request, subsidiary):
         ]
         extension = os.path.splitext(attachment.name)[1].lower()
         if extension not in allowed_extensions:
-            return JsonResponse(
-                {
-                    "error": "Invalid file extension. Allowed extensions are: {}".format(
-                        ", ".join(allowed_extensions)
-                    )
-                },
-                status=400,
-            )
+            error="Invalid file extension. Allowed extensions are: {}".format(",".join(allowed_extensions))
+            messages.error(request,error)
+            return redirect(request.META.get("HTTP_REFERER"))
         project = get_object_or_404(Projects, id=request.POST.get("project_id"))
         # Save the attachment to the server
         upload_path = "static/attachments/" + subsidiary + "-" +project.slug+"-"+ attachment.name
         with open(upload_path, "wb+") as destination:
             for chunk in attachment.chunks():
                 destination.write(chunk)
-
         
         attachment_instance = Attachments.objects.create(
             project=project,
@@ -277,26 +271,34 @@ def upload_profile_image(request, subsidiary):
                 {"error": "Employee record not found for the user."}, status=400
             )
 
-        # Delete the old profile image if it exists
+       
         if employee.profile_image:
-            old_image_path = employee.profile_image.path
+            old_image_path = os.path.join(settings.MEDIA_ROOT, str(employee.profile_image.url))
             if os.path.exists(old_image_path):
                 os.remove(old_image_path)
+
         uploaded_image = request.FILES["profile_image"]
 
-        # Resize the image to 150x150 pixels
+        
         img = Image.open(uploaded_image)
         img = img.resize((150, 150), Image.ANTIALIAS)
-        resized_image_path = os.path.join("static/profile_images/", uploaded_image.name)
-        img.save(resized_image_path)
+
+       
+        resized_image_path = os.path.join("profile_images", uploaded_image.name)
+
+       
+        resized_image_full_path = os.path.join(settings.MEDIA_ROOT, resized_image_path)
+        img.save(resized_image_full_path)
+
         employee.profile_image = resized_image_path
         employee.save()
-        image_url = employee.profile_image.url
+
+        
+        image_url = os.path.join(settings.MEDIA_URL, resized_image_path)
         return JsonResponse({"image_url": image_url})
     else:
         return JsonResponse(
             {"error": "Image not provided or invalid request."}, status=400
         )
-
 
 # code Closed!

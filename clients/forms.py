@@ -8,7 +8,16 @@ class ClientForm(forms.ModelForm):
     class Meta:
         model = Clients
         fields = '__all__'
-    
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        instance = kwargs.get('instance')
+        
+        if instance:  # Update mode
+            self.fields['password'].required = False
+            self.fields['confirm_password'].required = False
+            self.fields['password'].widget.attrs['placeholder'] = 'Leave blank if unchanged'
+            self.fields['confirm_password'].widget.attrs['placeholder'] = 'Leave blank if unchanged'
     
     username = forms.CharField(label='Username',required=True)    
     email = forms.EmailField(label='Email',required=True)
@@ -25,11 +34,11 @@ class ClientForm(forms.ModelForm):
         if password != confirm_password:
             raise forms.ValidationError("Passwords do not match.")
         
-        if User.objects.filter(username=cleaned_data.get("username")).exists():
-            raise forms.ValidationError("Username already exists. Please choose a different one.")
+        # if User.objects.filter(username=cleaned_data.get("username")).():
+        #     raise forms.ValidationError("Username already exists. Please choose a different one.")
 
-        if User.objects.filter(email=cleaned_data.get("email")).exists():
-            raise forms.ValidationError("Email address already exists. Please use a different one.")
+        # if User.objects.filter(email=cleaned_data.get("email")).exists():
+        #     raise forms.ValidationError("Email address already exists. Please use a different one.")
 
         return cleaned_data
     
